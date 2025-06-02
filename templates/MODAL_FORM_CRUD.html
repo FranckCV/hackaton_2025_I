@@ -1,0 +1,230 @@
+<div class="space_modal modal_crud_{{modo_modal}} modal_crud_base" id="modal_crud_{{modo_modal}}_{{tabla}}_{{fila[primary_key] if fila else ''}}">
+  <form class="modal_crud_content"
+        {% if modo_modal in ['insert', 'update', 'delete', 'unactive']  %}
+        action="{{ url_for('crud_' + modo_modal, tabla=tabla) }}"
+        method="POST"
+        
+        {% endif %}>
+        
+    <input type="hidden" name="{{ primary_key }}" value="{{ fila[primary_key] if fila else '' }}">
+
+    <div class="row">
+      <h3>
+        {% if modo_modal == 'insert' %} {{ NOMBRE_BTN_INSERT }}
+        {% elif modo_modal == 'update' %} {{ NOMBRE_BTN_UPDATE }}
+        {% elif modo_modal == 'delete' %} {{ NOMBRE_BTN_DELETE }}
+        {% elif modo_modal == 'unactive' %}
+          {% if fila['activo'] == 0 %} {{ ACT_STATE_1 }}
+          {% elif fila['activo'] == 1 %} {{ ACT_STATE_0 }}
+          {% endif %}
+        {% elif modo_modal == 'consult' %} {{ NOMBRE_BTN_CONSULT }}
+        {% endif %}
+        {{ nombre_tabla }}
+      </h3>
+    </div>
+
+    {% if modo_modal in ['delete', 'unactive'] %}
+      <p>
+        ¿Está seguro de que desea 
+        {% if modo_modal == 'delete' %}
+          eliminar este {{nombre_tabla}} ({{primary_key | upper}}: {{fila[primary_key]}})?
+        {% elif modo_modal == 'unactive' %}
+          {% if fila['activo'] == 0 %}
+            {{ ACT_STATE_1 | lower }}
+          {% else %}
+            {{ ACT_STATE_0 | lower }}
+          {% endif %}
+          este {{nombre_tabla}} ({{primary_key | upper}}: {{fila[primary_key]}})?
+        {% endif %}
+      </p>
+    {% endif %}
+
+    {% if modo_modal in ['insert', 'update', 'consult'] %}
+    <div class="form_content">
+
+    <div class="row form_fields">
+      {% for campo in fields_form %}
+      {# campo[6] != 'map' #}
+
+      <div class="form_field form_{{campo[3]}}">
+        <label for="{{campo[0]}}">{{campo[1]}}:</label>
+
+        {% if campo[3] == 'select' %}
+          {% if modo_modal == 'consult' %}
+          <input 
+          id="{{campo[0]}}" 
+          type="text" 
+          name="{{campo[0]}}" 
+          placeholder="{{campo[2]}}" 
+          value="{{ fila[campo[6][1]] }}"
+          disabled
+          {% if campo[4] %}required{% endif %} 
+          >
+            {% else %}
+                <select 
+                id="{{campo[0]}}" 
+                name="{{campo[0]}}"
+                data-select="{{campo[0]}}"
+                {% if modo_modal != 'insert' and fila[campo[0]] is not none %} data-select-value="{{fila[campo[0]]}}" {% endif %}
+                {% if modo_modal == 'consult' or campo[5] == False %} disabled {% endif %}
+                >
+                    {% if modo_modal == 'insert' %}
+                    <option value="-1" disabled selected>{{campo[2]}}</option>
+                    {% endif %}
+                    </select>
+            {% endif %}
+
+        {% elif campo[3] == 'textarea' %}
+          <textarea id="{{campo[0]}}" name="{{campo[0]}}"
+            {% if campo[4] %}required{% endif %}
+            {% if modo_modal == 'consult' or campo[5] == False %}disabled{% endif %}>{{ fila[campo[0]] if fila else '' }}</textarea>
+
+        {% elif campo[3] == 'p' %}
+            <div class="form_p_content">
+                {% if campo[0] == 'activo' %}
+                <p class="activo {{'btn_active' if fila[campo[0]] or modo_modal == 'insert' else 'btn_unactive'}}">
+                    {{ STATE_1 if fila[campo[0]] or modo_modal == 'insert' else STATE_0 }}
+                </p>
+                {% else %}
+                <p id="{{campo[0]}}" name="{{campo[0]}}">{{ fila[campo[0]] if fila[campo[0]] else '' }}</p>
+                {% endif %}
+            </div>
+
+        {% elif campo[3] == 'icon' %}
+            <input type="text" placeholder="{{campo[2]}}" id="{{campo[0]}}" name="{{campo[0]}}" 
+            {% if campo[4] %}required{% endif %} value="{{modulo[campo[0]]}}" 
+             {% if modo_modal == 'consult' or campo[5] == False %}disabled{% endif %}>
+            <i class="{{modulo[campo[0]]}}"></i>
+
+        {% elif campo[3] == 'color' %}
+
+          <input 
+          type="text" 
+          class="input_color_sync"
+          data-name="{{campo[0]}}"
+          name="{{campo[0]}}" 
+          value="{{modulo[campo[0]]}}" 
+          placeholder="Valor hexadecimal" 
+          {% if campo[4] %}required{% endif %} 
+          {% if modo_modal == 'consult' or campo[5] == False %}disabled{% endif %}
+          >
+          <input 
+          type="color" 
+          class="input_color_sync"
+          data-name="{{campo[0]}}"
+          name="{{campo[0]}}" 
+          value="{{ modulo[campo[0]]}}" 
+          {% if campo[4] %}required{% endif %}
+          {% if modo_modal == 'consult' or campo[5] == False %}disabled{% endif %}
+          >
+
+        {% elif campo[3] == 'img' %}
+        
+          {% if modo_modal == 'insert' %}
+          <input 
+            type="file" 
+            id="{{campo[0]}}" 
+            name="{{campo[0]}}" 
+            accept="image/*" 
+            {% if campo[4] %}required{% endif %}
+            {% if campo[5] == False %}disabled{% endif %}
+          >
+          <div class="form_img_container" id="">
+            <img id="" class="clickable-image" src="" alt="Imagen {{tabla}}">
+          </div>
+          {% else %}
+          <input type="hidden" name="{{campo[0]}}_actual" value="{{fila[campo[0]]}}">
+          <input 
+            type="file" 
+            id="{{campo[0]}}" 
+            name="{{campo[0]}}" 
+            accept="image/*"             
+            {% if modo_modal == 'consult' or campo[5] == False %}disabled{% endif %}
+          >
+          <div class="form_img_container" id="">
+            <img id="" class="clickable-image" src="/static/img/img_{{tabla}}/{{fila[campo[0]]}}" alt="Imagen {{tabla}}">
+          </div>
+          {% endif %}
+
+        {% elif campo[3] == 'decimal_6' %}
+          <input id="{{campo[0]}}" name="{{campo[0]}}"
+            type="number" placeholder="{{campo[2]}}"
+            step="0.000001"
+            {% if campo[4] %}required{% endif %}
+            {% if campo[5] == False or modo_modal == 'consult' %}disabled{% endif %}
+            value="{% if fila and fila[campo[0]] != None %}{{fila[campo[0]]}}{% endif %}">
+
+        {% elif campo[3] == 'decimal_2' %}
+          <input id="{{campo[0]}}" name="{{campo[0]}}"
+            type="number" placeholder="{{campo[2]}}"
+            step="0.01"
+            {% if campo[4] %}required{% endif %}
+            {% if campo[5] == False or modo_modal == 'consult' %}disabled{% endif %}
+            value="{% if fila and fila[campo[0]] != None %}{{fila[campo[0]]}}{% endif %}">
+
+
+        {% else %}
+          <input id="{{campo[0]}}" name="{{campo[0]}}"
+            type="{{campo[3]}}" placeholder="{{campo[2]}}"
+            {% if campo[4] %}required{% endif %}
+            {% if campo[5] == False or modo_modal == 'consult' %}disabled{% endif %}
+            value="{% if fila and fila[campo[0]] != None %}{{fila[campo[0]]}}{% endif %}">
+
+        {% endif %}
+      </div>
+      
+      {# endif #}
+      {% endfor %}
+    </div>
+
+    {% if 'map' in fields_form | map(attribute=6) | list %}
+      <style>
+        .space_modal {
+          width: auto;
+        }
+        .form_fields {
+          width: 600px;
+        }
+      </style>
+
+      {% if modo_modal == 'consult' %}
+      <!-- <style>
+        .map_space::before {
+          content: '';
+          position: absolute;
+        }
+        </style> -->
+      {% endif %}
+
+      <div class="map_content" >
+        <label for="">Seleccione una ubicación del mapa</label>
+
+        <div class="map_space" data-has-map="true">
+        </div>
+
+      </div>
+    {% endif %}
+
+    </div>
+
+    {% endif %}
+
+
+    <div class="row">
+      <div class="col">
+        <div class="button btn_back" onclick="closeModal()">Cancelar</div>
+      </div>
+      <div class="col-1"></div>
+      <div class="col">
+        <button class="button btn_acept"
+          {% if modo_modal in ['consult'] %}
+          type="button" onclick="closeModal()"
+          {% else %}
+          type="submit"
+          {% endif %}>
+          Aceptar
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

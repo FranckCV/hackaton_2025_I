@@ -7,7 +7,7 @@ def obtener_conexion():
                                 # port=3307,
                                 user='root',
                                 password='',
-                                db='bd_' ,                                
+                                db='bd_chatbot' ,                                
                                 cursorclass=DictCursor
                                 )
 

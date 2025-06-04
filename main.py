@@ -1,4 +1,6 @@
 from flask import Flask, render_template, request, redirect, flash, jsonify, session, make_response,  redirect, url_for
+from flask_cors import CORS
+
 # from flask_jwt import JWT, jwt_required, current_identity
 # import uuid
 # from functools import wraps

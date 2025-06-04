@@ -1,78 +1,113 @@
-# import requests
-# import json
-
-# # Configuración
-# API_KEY = "TU_API_KEY_AQUI"
-# PHONE_NUMBER_ID = "TU_PHONE_NUMBER_ID"
-# RECIPIENT_PHONE_NUMBER = "51987654321"  # Número del usuario, con código de país
-# MENSAJE = "Hola, este es un mensaje de prueba desde mi bot 😎"
-
-# # URL de la API de WhatsApp de 360dialog
-# url = f"https://waba.360dialog.io/v1/messages"
-
-# # Cabeceras de autenticación
-# headers = {
-#     "D360-API-KEY": API_KEY,
-#     "Content-Type": "application/json"
-# }
-
-# # Cuerpo del mensaje
-# data = {
-#     "recipient_type": "individual",
-#     "to": RECIPIENT_PHONE_NUMBER,
-#     "type": "text",
-#     "text": {
-#         "body": MENSAJE
-#     }
-# }
-
-# # Enviar mensaje
-# response = requests.post(url, headers=headers, data=json.dumps(data))
-
-# # Mostrar resultado
-# print("Código de estado:", response.status_code)
-# print("Respuesta:", response.json())
 import os
-from flask import Flask, render_template, request, jsonify
-from flask_cors import CORS
+from flask import Flask, request, jsonify
+import controladores.controlador_pregunta as controlador_pregunta
+import requests
 from dotenv import load_dotenv
 import openai
 
 load_dotenv()
+app = Flask(__name__)
+
+
+ACCESS_TOKEN = os.getenv("WHATSAPP_ACCESS_TOKEN")
+if not ACCESS_TOKEN:
+    raise RuntimeError("ERROR: WhatsApp ACCESS_TOKEN no definido en .env")
+
+
 openai.api_key = os.getenv("OPENAI_API_KEY")
 if not openai.api_key:
-    raise RuntimeError("ERROR: OPENAI_API_KEY no está definida.")
+    raise RuntimeError("ERROR: OPENAI_API_KEY no definido en .env")
 
-app = Flask(__name__)
-CORS(app)
 
-@app.route("/", methods=["GET"])
-def index():
-    return render_template("pruebita.html")
+VERIFY_TOKEN = os.getenv("WHATSAPP_VERIFY_TOKEN") 
 
-@app.route("/api/chat", methods=["POST"])
-def chat():
-    data = request.get_json() or {}
-    texto_usuario = data.get("mensaje", "").strip()
-    if texto_usuario == "":
-        return jsonify({"error": "El campo 'mensaje' no puede estar vacío."}), 400
+@app.route("/webhook", methods=["GET", "POST"])
+def webhook():
+    if request.method == "GET":
+        # Validación inicial de Facebook/Meta
+        mode = request.args.get("hub.mode")
+        token = request.args.get("hub.verify_token")
+        challenge = request.args.get("hub.challenge")
+        if mode == "subscribe" and token == VERIFY_TOKEN:
+            return challenge, 200
+        return "Error de validación", 403
+
+    # Si es POST, es un mensaje entrante
+    payload = request.get_json()
+    # 4.1) Extraer el phone_number_id para poder responder
+    try:
+        entry = payload["entry"][0]
+        changes = entry["changes"][0]
+        value = changes["value"]
+        metadata = value["metadata"]
+        PHONE_NUMBER_ID = metadata["phone_number_id"] 
+    except Exception as e:
+        print("[ERROR] No pude extraer phone_number_id:", e)
+        return "Ok", 200  
+
+    # 4.2) Extraer número remitente y texto
+    try:
+        contacto = value["contacts"][0]
+        remitente = contacto["wa_id"] 
+        mensaje = value["messages"][0]
+        if mensaje.get("type") != "text":
+            return "Solo texto soportado", 200
+        texto_usuario = mensaje["text"]["body"].strip()
+    except Exception as e:
+        print("[ERROR] No pude extraer remitente/texto:", e)
+        return "Ok", 200
+
+    # 4.3) Intentar obtener respuesta directa desde la BD
+    texto_bd = controlador_pregunta.buscar_respuesta_por_palabra(texto_usuario)
+    if texto_bd:
+        texto_gpt = texto_bd
+    else:
+        # 4.4) Si no hay coincidencia en la BD, llamar a OpenAI
+        system_message = {
+            "role": "system",
+            "content": (
+                "Eres un chatbot oficial de la USAT. "
+                "Responde únicamente sobre carreras, admisión, costos, fechas, sedes y servicios de la universidad católica santo toribio de Mogrovejo en chiclayo, Lambayeque, Perú. "
+                "Si la pregunta NO está relacionada con la  universidad católica santo toribio de Mogrovejo en chiclayo, Lambayeque, Perú, responde exactamente: "
+                "\"Este chat solo admite preguntas académicas sobre la USAT.\" "
+                "Si la pregunta está relacionada, mantén tu respuesta breve y en español."
+            )
+        }
+        user_message = {"role": "user", "content": texto_usuario}
+
+        try:
+            respuesta_ai = openai.chat.completions.create(
+                model="gpt-3.5-turbo",
+                messages=[system_message, user_message],
+                max_tokens=250,
+                temperature=0.5
+            )
+            texto_gpt = respuesta_ai.choices[0].message.content.strip()
+        except Exception as e:
+            print("[ERROR OPENAI]", e)
+            texto_gpt = "Lo siento, hubo un error procesando tu mensaje."
+
+    # 4.5) Enviar la respuesta (de BD o de GPT) vía Graph API de WhatsApp
+    url = f"https://graph.facebook.com/v15.0/{PHONE_NUMBER_ID}/messages"
+    headers = {
+        "Authorization": f"Bearer {ACCESS_TOKEN}",
+        "Content-Type": "application/json"
+    }
+    cuerpo = {
+        "messaging_product": "whatsapp",
+        "to": remitente,
+        "type": "text",
+        "text": {"body": texto_gpt}
+    }
 
     try:
-        # ↓ aquí usamos la llamada migra da a la nueva interfaz (openai>=1.0.0):
-        respuesta = openai.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "Eres un asistente muy servicial que responde en español."},
-                {"role": "user",   "content": texto_usuario}
-            ],
-            max_tokens=200,
-            temperature=0.7
-        )
-        contenido = respuesta.choices[0].message.content.strip()
-        return jsonify({"respuesta": contenido})
-
+        resp = requests.post(url, headers=headers, json=cuerpo)
+        if resp.status_code not in (200, 201):
+            print("[ERROR WHATSAPP SEND]", resp.status_code, resp.text)
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        print("[ERROR REQUEST]", e)
+
+    return jsonify({"status": "ok"}), 200
 
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 5000))

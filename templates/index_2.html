@@ -1,0 +1,195 @@
+{% extends "MAESTRA.html" %}
+
+{% block titulo %}
+Inicio
+{% endblock %}
+
+{% block estilos %}
+<style>
+  #chatbot-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 999;
+  }
+
+  #chatbot-box {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    width: 350px;
+    max-height: 500px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    display: none;
+    flex-direction: column;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    overflow: hidden;
+  }
+
+  #chatbot-messages {
+    padding: 15px;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  #chatbot-input {
+    display: flex;
+    border-top: 1px solid #ccc;
+  }
+
+  #chatbot-input input {
+    flex: 1;
+    border: none;
+    padding: 10px;
+  }
+
+  #chatbot-input button {
+    border: none;
+    background: #00d1b2;
+    color: white;
+    padding: 10px 15px;
+  }
+
+  .chat-bubble {
+    background-color: #f1f1f1;
+    padding: 10px;
+    border-radius: 10px;
+    margin: 5px 0;
+  }
+
+  .chat-bubble.bot {
+    background-color: #00d1b2;
+    color: white;
+  }
+</style>
+{% endblock %}
+
+{% block contenido %}
+<section class="section">
+  <div class="container">
+    <h1 class="title">Bienvenido a la Escuela de Ingeniería de Sistemas</h1>
+    <p class="subtitle">Explora, infórmate y conversa con nuestro chatbot.</p>
+  </div>
+</section>
+
+<button id="chatbot-toggle" class="button is-info is-rounded">
+  💬 Chat
+</button>
+
+<div id="chatbot-box" class="box is-flex is-flex-direction-column">
+  <div id="chatbot-messages">
+    <div class="chat-bubble bot">¡Hola! Soy el asistente virtual de la Escuela 😊<br>Selecciona una categoría para
+      comenzar:</div>
+    <div id="categoria-botones" class="mt-2"></div>
+  </div>
+  <div id="chatbot-input">
+    <input type="text" id="mensajeUsuario" placeholder="Escribe tu pregunta...">
+    <button onclick="enviarPregunta()">Enviar</button>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.getElementById("chatbot-toggle").addEventListener("click", function () {
+    const box = document.getElementById("chatbot-box");
+    box.style.display = box.style.display === "none" ? "flex" : "none";
+  });
+
+  window.addEventListener("DOMContentLoaded", function () {
+    fetch("/categorias")
+      .then(res => res.json())
+      .then(data => {
+        const contenedor = document.getElementById("categoria-botones");
+        data.forEach(c => {
+          const btn = document.createElement("button");
+          btn.className = "button is-small is-light m-1";
+          btn.textContent = c.nombre;
+          btn.onclick = () => mostrarPreguntas(c.id);
+          contenedor.appendChild(btn);
+        });
+      });
+  });
+
+  function mostrarPreguntas(categoriaId) {
+    fetch(`/preguntas_por_categoria/${categoriaId}`)
+      .then(res => res.json())
+      .then(data => {
+        const contenedor = document.getElementById("chatbot-messages");
+        const mensaje = document.createElement("div");
+        mensaje.className = "chat-bubble bot";
+
+        mensaje.innerHTML = "<strong>Preguntas frecuentes:</strong><br>";
+        data.forEach(p => {
+          const btn = document.createElement("button");
+          btn.className = "button is-small is-link is-light m-1";
+          btn.textContent = p.titulo;
+          btn.onclick = () => mostrarRespuestaDirecta(p.titulo);
+          mensaje.appendChild(btn);
+        });
+
+        contenedor.appendChild(mensaje);
+        contenedor.scrollTop = contenedor.scrollHeight;
+      });
+  }
+
+  function mostrarRespuestaDirecta(preguntaTexto) {
+    const contenedor = document.getElementById("chatbot-messages");
+
+    const userMsg = document.createElement("div");
+    userMsg.className = "chat-bubble";
+    userMsg.textContent = preguntaTexto;
+    contenedor.appendChild(userMsg);
+
+    fetch("/respuesta_directa", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ titulo: preguntaTexto })
+    })
+      .then(res => res.json())
+      .then(data => {
+        const botMsg = document.createElement("div");
+        botMsg.className = "chat-bubble bot";
+        botMsg.textContent = data.respuesta;
+        contenedor.appendChild(botMsg);
+        contenedor.scrollTop = contenedor.scrollHeight;
+      });
+  }
+
+  function enviarPregunta() {
+    const input = document.getElementById("mensajeUsuario");
+    const mensaje = input.value.trim();
+    if (!mensaje) return;
+
+    const contenedor = document.getElementById("chatbot-messages");
+
+    const userMsg = document.createElement("div");
+    userMsg.className = "chat-bubble";
+    userMsg.textContent = mensaje;
+    contenedor.appendChild(userMsg);
+
+    fetch("/preguntar_con_pln", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ pregunta: mensaje })
+    })
+      .then(res => res.json())
+      .then(data => {
+        const botMsg = document.createElement("div");
+        botMsg.className = "chat-bubble bot";
+        botMsg.textContent = data.respuesta;
+        contenedor.appendChild(botMsg);
+        contenedor.scrollTop = contenedor.scrollHeight;
+      });
+
+    input.value = "";
+  }
+</script>
+{% endblock %}

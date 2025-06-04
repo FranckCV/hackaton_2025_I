@@ -1,12 +1,10 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, flash, jsonify, session, make_response,  redirect, url_for
+
 import controladores.controlador_pregunta as controlador_pregunta
 import controladores.controlador_categoria as controlador_categoria
 import modelo_semantico
 import os
 import requests
-# from dotenv import load_dotenv
-
-from flask import jsonify, make_response, redirect, url_for, flash, session  # si los necesitas
 from datetime import datetime, date
 import hashlib
 import base64

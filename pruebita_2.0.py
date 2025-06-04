@@ -61,7 +61,7 @@ def responder(texto_usuario):
     return preguntar_a_gpt(contexto_bd, texto_usuario)
 
 if __name__ == "__main__":
-    print("=== Chatbot USAT (solo BD + GPT flexible) 🤖 ===")
+    print("=== Chatbot USAT 🤖 ===")
     while True:
         entrada = input("\nTú: ").strip()
         if entrada.lower() in ("salir", "exit", "quit"):

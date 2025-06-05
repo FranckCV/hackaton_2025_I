@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, flash, jsonify, session, make_response,  redirect, url_for
-
+import configuraciones
 import controladores.controlador_pregunta as controlador_pregunta
 import controladores.controlador_categoria as controlador_categoria
 import modelo_semantico

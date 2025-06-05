@@ -5,74 +5,87 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="shortcut icon" href="{{URL_IMG_LOGO}}">
+    <link rel="shortcut icon" href="{{ URL_IMG_LOGO }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.5.0/remixicon.css" crossorigin="">
     <link rel="stylesheet" href="/static/css/common_styles/bootstrap.min.css" />
     <link rel="stylesheet" href="/static/css/common_styles/all.min.css" />
     <link rel="stylesheet" href="/static/css/common_styles/fonts.css" />
     <link rel="stylesheet" href="/static/css/common_styles/common_style.css" />
     <link rel="stylesheet" href="/static/css/common_styles/fontawesome.min.css" />
-    {% set emp_color_pri = main_information.get('color_pri') %}
-    {% set emp_color_sec = main_information.get('color_sec') %}
-    {% set emp_color_ter = main_information.get('color_ter') %}
+    <link rel="stylesheet" href="/static/css/admin_styles.css">
 
     <style>
         :root {
             --color-contrast: #ffffff;
-            /* --color-base: #18076e; */
-            /* --color-base: #8a5105; */
-            /* --color-base: #107444; */
-            /* --color-sec: #00cee9; */
-            /* --color-sec: #f07305; */
-            /* --color-sec: #a20eff; */
-            /* --color-contrast: #fff; */
-            --color-base: {{ emp_color_pri }};
-            --color-sec:  {{ emp_color_sec }};
-            --color-thr:  {{ emp_color_ter }};
-            /* #1d4c82 #13e2da #1b98e0 */
-
-            /* --color-base: #1d4c82;
-            --color-sec:  #13e2da ;
-            --color-thr:  #1b98e0; */
+            --color-base: #c62828;
+            --color-sec: #ffffff;
+            --color-thr: #b71c1c;
         }
     </style>
 
-    {% block estilos_html %}
-    {% endblock %}
+    <title>
+        {% block titulo %}{% endblock %} | {{ SYSTEM_NAME }}
+    </title>
 
+    {% block estilos %}{% endblock %}
 </head>
 
 <body class="general_body">
-    
-    {% block body_html %}
-    {% endblock %}
+    <header class="general_element"></header>
+
+    <aside id="menu_aside" class="general_element">
+        <div class="menu_img">
+            <a href="{{ url_for('index') }}">
+                <img src="{{ URL_IMG_LOGO }}" class="logo_admin" />
+            </a>
+        </div>
+
+        {% for key, titulo, icono in CONTROLLERS %}
+            {% if config.active %}
+                <div class="menu_option {% if request.path == url_for('crud_generico', tabla=key) %}active-modulo{% endif %}">
+                    <a class="menu_title" href="{{ url_for('crud_generico', tabla=key) }}">
+                        <i class="{{ config.icon_page or ICON_PAGE_CRUD }}"></i>
+                        <p>{{ config.titulo | capitalize }}</p>
+                    </a>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </aside>
+
+
+    <section class="general_element">
+        <div class="section_content">
+            {% block contenido %}{% endblock %}
+        </div>
+    </section>
+
+    <footer class="general_element"></footer>
 
     {% if cookie_error %}
-    <div id="modalError" class="modal modalMsg modalError ver_modalMsg">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-                </div>
-                <div class="modal-body">
-                    <p>{{cookie_error}}</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="modal_button_cancelar" id="cancelarError">
-                        <i class="fa fa-times" aria-hidden="true"></i>
-                    </button>
+        <div id="modalError" class="modal modalMsg modalError ver_modalMsg">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <div class="modal-body">
+                        <p>{{ cookie_error }}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="modal_button_cancelar" id="cancelarError">
+                            <i class="fa fa-times" aria-hidden="true"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
     {% endif %}
-    
+
     <div id="overlayImage" class="overlayImage" onclick="closeImage()">
-      <img id="enlargedImage" class="enlarged-image" />
+        <img id="enlargedImage" class="enlarged-image" />
     </div>
 
     <script src="/static/js/common_scripts/bootstrap.bundle.min.js"></script>
-    <script src="/static/js/common_scripts/bootstrap.min.js"></script>
     <script src="/static/js/common_scripts/common_script.js"></script>
 
     <script>
@@ -97,28 +110,27 @@
 
     <script>
         function openImage(src) {
-        const overlay = document.getElementById('overlayImage');
-        const enlargedImage = document.getElementById('enlargedImage');
-
-        enlargedImage.src = src;
-        overlay.style.display = 'flex'; 
+            const overlay = document.getElementById('overlayImage');
+            const enlargedImage = document.getElementById('enlargedImage');
+            enlargedImage.src = src;
+            overlay.style.display = 'flex';
         }
 
         function closeImage() {
-        const overlay = document.getElementById('overlayImage');
-        overlay.style.display = 'none';
+            const overlay = document.getElementById('overlayImage');
+            overlay.style.display = 'none';
         }
 
-
-        document.addEventListener('click', function(event) {
-        if (event.target.classList.contains('clickable-image')) {
-            openImage(event.target.src);
-        }
+        document.addEventListener('click', function (event) {
+            if (event.target.classList.contains('clickable-image')) {
+                openImage(event.target.src);
+            }
         });
     </script>
+    <script src="/static/js/crudModal.js"></script>
 
-    {% block scripts_html %}
-    {% endblock %}
+    {% block scripts %}{% endblock %}
+
 
 </body>
 

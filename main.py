@@ -134,8 +134,8 @@ def extract_col_row(lista):
 CONTROLADORES = {
     "categoria": {
         "active" : True ,
-        "titulo": "tipos de documentos",
-        "nombre_tabla": "tipo de documento",
+        "titulo": "categoría de preguntas",
+        "nombre_tabla": "categoria",
         "controlador": controlador_categoria,
         "icon_page": 'fa-solid fa-id-card',
         "filters": [

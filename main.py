@@ -8,6 +8,8 @@ import requests
 from datetime import datetime, date
 import hashlib
 import base64
+from functools import wraps
+import inspect
 
 # load_dotenv()
 
@@ -128,6 +130,14 @@ def extract_col_row(lista):
     return [columns , rows]
 
 ###########################################CONTROLADORES#################################################
+ERRORES = {
+    "'NoneType' object is not subscriptable" : "Inicie sesión con su cuenta correspondiente",
+    "404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again." : "El enlace al que intentó ingresar no existe." ,
+    "NO_EXISTE_USERNAME" : "El nombre de usuario ingresado ya fue tomado por otro usuario" ,
+    "NO_EXISTE_EMAIL" : "El correo electronico ingresado ya fue tomado por otro usuario" ,
+    "LOGIN_INVALIDO" : 'Credenciales inválidas. Intente de nuevo' ,
+    "foreign key constraint fails" : 'No es posible eliminar dicha fila' ,
+}
 
 
 
@@ -137,7 +147,7 @@ CONTROLADORES = {
         "titulo": "categoría de preguntas",
         "nombre_tabla": "categoria",
         "controlador": controlador_categoria,
-        "icon_page": 'fa-solid fa-id-card',
+        "icon_page": 'fa-solid fa-list',
         "filters": [
             ['activo', f'{TITLE_STATE}', get_options_active() ],
         ] ,
@@ -158,6 +168,233 @@ CONTROLADORES = {
         }
     },
 }
+
+
+
+
+def validar_error_crud():
+    def decorator(f):
+        @wraps(f)
+        def wrapper(*args, **kwargs):
+            try:
+                return f(*args, **kwargs)
+            except Exception as e:
+                tabla = kwargs.get('tabla') or args[0] 
+                return rdrct_error(redirect_crud(tabla) , e) 
+        return wrapper
+    return decorator
+
+
+
+def redirect_url(url):
+    return redirect(url_for(url))
+
+
+def redirect_crud(tabla):
+    return redirect(url_for('crud_generico', tabla = tabla))
+
+
+def rdrct_error(resp_redirect , e):
+    resp = make_response(resp_redirect)
+    error_message = str(e)
+
+    for clave in ERRORES:
+        if clave in error_message:
+            msg = ERRORES[clave]
+            break 
+    else:
+        msg =  'ERROR DESCONOCIDO ENCONTRADO: '+error_message
+
+    resp.set_cookie('error', msg , max_age=30)
+    return resp 
+
+#################RUTAS#####################
+
+@app.route("/crud=<tabla>")
+# @validar_empleado()
+def crud_generico(tabla):
+    config = CONTROLADORES.get(tabla)
+    if config:
+        active = config["active"]
+        no_crud = config.get('no_crud')
+        if active is True and (no_crud is None or no_crud is False):
+            icon_page_crud = get_icon_page(config.get("icon_page"))
+            titulo = config["titulo"]
+            controlador = config["controlador"]
+            nombre_tabla = config["nombre_tabla"]
+            filters = config["filters"]
+            fields_form = config["fields_form"]
+
+            existe_activo = controlador.exists_Activo()
+            columnas , filas = controlador.get_table()
+            primary_key = controlador.get_primary_key()
+            table_columns  = list(filas[0].keys()) if filas else []
+            
+            CRUD_FORMS = config["crud_forms"]
+            crud_list = CRUD_FORMS.get("crud_list")
+            crud_search = CRUD_FORMS.get("crud_search")
+            crud_consult = CRUD_FORMS.get("crud_consult")
+            crud_insert = CRUD_FORMS.get("crud_insert")
+            crud_update = CRUD_FORMS.get("crud_update")
+            crud_delete = CRUD_FORMS.get("crud_delete")
+            crud_unactive = CRUD_FORMS.get("crud_unactive") and existe_activo
+
+            return render_template(
+                "CRUD.html" ,
+                tabla          = tabla ,
+                nombre_tabla   = nombre_tabla ,
+                icon_page_crud = icon_page_crud ,
+                titulo         = titulo ,
+                filas          = filas ,
+                primary_key    = primary_key ,
+                filters        = filters,
+                fields_form    = fields_form ,
+                # value_search   = value_search,
+                columnas       = columnas ,
+                key_columns    = list(columnas.keys()) ,
+                table_columns  = table_columns ,
+                # info_columns   = info_columns,
+                crud_list      = crud_list,
+                crud_search    = crud_search,
+                crud_consult   = crud_consult,
+                crud_insert    = crud_insert,
+                crud_update    = crud_update,
+                crud_delete    = crud_delete,
+                crud_unactive  = crud_unactive,
+            )
+
+
+##################_ PAGINAS EMPLEADO METHOD POST _################## 
+
+@app.route("/insert_row=<tabla>", methods=["POST"])
+# @validar_empleado()
+# @validar_error_crud()
+def crud_insert(tabla):
+    # try:
+        config = CONTROLADORES.get(tabla)
+        if not config:
+            return "Tabla no soportada", 404
+
+        active = config["active"]
+        no_crud = config.get('no_crud')
+
+        if active is False:
+            return "Tabla no soportada", 404
+
+        controlador = config["controlador"]
+        firma = inspect.signature(controlador.insert_row)
+
+        valores = []
+        for nombre, parametro in firma.parameters.items():
+            if nombre in request.files:
+                archivo = request.files[nombre]
+                if archivo.filename != "":
+                    nuevo_nombre = guardar_imagen_bd(tabla , '' , archivo)
+                    valores.append(nuevo_nombre)
+                else:
+                    # Si no se selecciona una nueva imagen, mantener la actual
+                    valores.append(request.form.get(f"{nombre}_actual"))
+            else:
+                valor = request.form.get(nombre)
+                valores.append(valor)
+
+        controlador.insert_row( *valores )
+
+        if no_crud :
+            return redirect(url_for(no_crud))
+        else:
+            return redirect(url_for('crud_generico', tabla = tabla))
+    # except Exception as e:
+    #     return f"No se aceptan carácteres especiales", 400
+
+
+@app.route("/update_row=<tabla>", methods=["POST"])
+def crud_update(tabla):
+    config = CONTROLADORES.get(tabla)
+    if not config:
+        return "Tabla no soportada", 404
+
+    active = config["active"]
+    no_crud = config.get("no_crud")
+
+    if active is False:
+        return "Tabla no soportada", 404
+
+    controlador = config["controlador"]
+    firma = inspect.signature(controlador.update_row)
+
+    valores = []
+    for nombre, _ in firma.parameters.items():
+        valor = request.form.get(nombre)
+        valores.append(valor)
+
+    controlador.update_row(*valores)
+
+    if no_crud:
+        return redirect(url_for(no_crud))
+    else:
+        return redirect(url_for("crud_generico", tabla=tabla))
+
+
+
+@app.route("/delete_row=<tabla>", methods=["POST"])
+# @validar_empleado()
+# @validar_error_crud()
+def crud_delete(tabla):
+    config = CONTROLADORES.get(tabla)
+    if not config:
+        return "Tabla no soportada", 404
+
+    active = config["active"]
+    no_crud = config.get('no_crud')
+
+    if active is False:
+        return "Tabla no soportada", 404
+
+    controlador = config["controlador"]
+    primary_key = controlador.get_primary_key()
+
+    if isinstance(primary_key, list):
+        valores_pk = [request.form.get(pk) for pk in primary_key]
+        controlador.delete_row(*valores_pk)
+    else:
+        controlador.delete_row(request.form.get(primary_key))
+
+    if no_crud :
+        return redirect(url_for(no_crud))
+    else:
+        return redirect(url_for('crud_generico', tabla = tabla))
+
+
+@app.route("/unactive_row=<tabla>", methods=["POST"])
+# @validar_empleado()
+# @validar_error_crud()
+def crud_unactive(tabla):
+    config = CONTROLADORES.get(tabla)
+    if not config:
+        return "Tabla no soportada", 404
+
+    active = config["active"]
+    no_crud = config.get('no_crud')
+
+    if active is False:
+        return "Tabla no soportada", 404
+
+    controlador = config["controlador"]
+    existe_activo = controlador.exists_Activo()
+    primary_key = controlador.get_primary_key()
+
+    if existe_activo:
+        if isinstance(primary_key, list):
+            valores_pk = [request.form.get(pk) for pk in primary_key]
+            controlador.unactive_row(*valores_pk)
+        else:
+            controlador.unactive_row(request.form.get(primary_key))
+
+    if no_crud :
+        return redirect(url_for(no_crud))
+    else:
+        return redirect(url_for('crud_generico', tabla = tabla))
 
 
 

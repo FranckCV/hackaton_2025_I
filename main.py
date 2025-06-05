@@ -13,6 +13,38 @@ import base64
 
 app = Flask(__name__, template_folder='templates')
 
+STATE_0              = configuraciones.STATE_0
+STATE_1              = configuraciones.STATE_1
+TITLE_STATE          = configuraciones.TITLE_STATE
+HABILITAR_ICON_PAGES = configuraciones.HABILITAR_ICON_PAGES
+ACT_STATE_0          = configuraciones.ACT_STATE_0
+ACT_STATE_1          = configuraciones.ACT_STATE_1
+NOMBRE_CRUD_PAGE     = configuraciones.NOMBRE_CRUD_PAGE
+NOMBRE_ADMINPAGES_PAGE = configuraciones.NOMBRE_ADMINPAGES_PAGE 
+NOMBRE_OPTIONS_COL   = configuraciones.NOMBRE_OPTIONS_COL
+NOMBRE_BTN_INSERT    = configuraciones.NOMBRE_BTN_INSERT
+NOMBRE_BTN_UPDATE    = configuraciones.NOMBRE_BTN_UPDATE
+NOMBRE_BTN_DELETE    = configuraciones.NOMBRE_BTN_DELETE
+NOMBRE_BTN_UNACTIVE  = configuraciones.NOMBRE_BTN_UNACTIVE
+NOMBRE_BTN_LIST      = configuraciones.NOMBRE_BTN_LIST
+NOMBRE_BTN_CONSULT   = configuraciones.NOMBRE_BTN_CONSULT
+NOMBRE_BTN_SEARCH    = configuraciones.NOMBRE_BTN_SEARCH
+ICON_PAGE_NOICON     = configuraciones.ICON_PAGE_NOICON 
+ICON_PAGE_CRUD       = configuraciones.ICON_PAGE_CRUD 
+ICON_PAGE_REPORT     = configuraciones.ICON_PAGE_REPORT 
+ICON_PAGE_DASHBOARD  = configuraciones.ICON_PAGE_DASHBOARD 
+ICON_PAGE_PANEL      = configuraciones.ICON_PAGE_PANEL 
+ICON_LIST            = configuraciones.ICON_LIST
+ICON_CONSULT         = configuraciones.ICON_CONSULT
+ICON_SEARCH          = configuraciones.ICON_SEARCH
+ICON_INSERT          = configuraciones.ICON_INSERT
+ICON_UPDATE          = configuraciones.ICON_UPDATE
+ICON_DELETE          = configuraciones.ICON_DELETE
+ICON_ACTIVE          = configuraciones.ICON_ACTIVE
+ICON_UNACTIVE        = configuraciones.ICON_UNACTIVE
+ICON_UNLOCK          = configuraciones.ICON_UNLOCK
+
+
 @app.route("/")
 def index():
     return render_template("index.html")  # Si tienes un index.html con interfaz
@@ -59,6 +91,76 @@ def preguntar_con_pln():
         respuesta = "No encontré una respuesta. ¿Podrías reformular la pregunta?"
 
     return jsonify({"respuesta": respuesta})
+
+
+############################################################################################################################
+#Opciones para activar o desacticar
+def get_options_active():
+    lista = [
+        [ 0 , STATE_0 ],
+        [ 1 , STATE_1 ],
+    ]
+    return lista
+
+#Opciones de paginación 
+def get_options_pagination_crud():
+    lista = [ 5 , 10 , 15 , 20 , 25  ]
+    selected_option_crud = 20
+    return lista , selected_option_crud
+
+#Obtiene el ícono, si no hay, retorna uno por defecto
+def get_icon_page(icon):
+    if not icon or icon == '':
+        return ICON_PAGE_CRUD 
+    else:
+        return icon 
+
+
+# Convertir lista en tabla de 2 columnas
+def extract_col_row(lista):
+    columns = []
+    rows = []
+
+    for c , r in lista:
+        columns.append( c )
+        rows.append( r )
+
+    return [columns , rows]
+
+###########################################CONTROLADORES#################################################
+
+
+
+CONTROLADORES = {
+    "categoria": {
+        "active" : True ,
+        "titulo": "tipos de documentos",
+        "nombre_tabla": "tipo de documento",
+        "controlador": controlador_categoria,
+        "icon_page": 'fa-solid fa-id-card',
+        "filters": [
+            ['activo', f'{TITLE_STATE}', get_options_active() ],
+        ] ,
+        "fields_form": [
+#            ID/NAME       LABEL              PLACEHOLDER    TYPE        REQUIRED   ABLE/DISABLE   DATOS
+            ['id',          'ID',              'ID',          'text',     True ,     False ,        None ],
+            ['nombre',      'Nombre',          'Nombre',      'text',     True ,     True  ,        None ],
+            ['activo',      f'{TITLE_STATE}',  'Activo',      'p',        True ,     False ,        None ],
+        ],
+        "crud_forms": {
+            "crud_list": True ,
+            "crud_search": True ,
+            "crud_consult": True ,
+            "crud_insert": True ,
+            "crud_update": True ,
+            "crud_delete": True ,
+            "crud_unactive": True ,
+        }
+    },
+}
+
+
+
 
 # @app.route("/preguntar", methods=["POST"])
 # def preguntar():

@@ -156,6 +156,7 @@ CONTROLADORES = {
 #            ID/NAME       LABEL              PLACEHOLDER    TYPE        REQUIRED   ABLE/DISABLE   DATOS
             ['id',          'ID',              'ID',          'text',     True ,     False ,        None ],
             ['nombre',      'Nombre',          'Nombre',      'text',     True ,     True  ,        None ],
+            ['descripcion', 'Descripción',     'descripcion', 'textarea', False,     True  ,        None ],
             ['activo',      f'{TITLE_STATE}',  'Activo',      'p',        True ,     False ,        None ],
         ],
         "crud_forms": {
@@ -231,6 +232,68 @@ def rdrct_error(resp_redirect , e):
 
     resp.set_cookie('error', msg , max_age=30)
     return resp 
+###############################OBTENER DATOS########################
+def listar_cruds():
+    pages = []
+
+    if not CONTROLADORES:
+        return pages
+    for key, config in CONTROLADORES.items():
+        if isinstance(config, dict) and config.get("active"):
+            titulo = config.get("titulo", key).capitalize()
+            icono_raw = config.get("icon_page")
+            icono     = get_icon_page(icono_raw)
+            pages.append([key, titulo, icono])
+
+    return pages
+
+@app.context_processor
+def inject_globals():
+    cruds = listar_cruds()                            # Listado de [key, titulo, icono]
+    options_pagination_crud, selected_option_crud = get_options_pagination_crud()
+    print(cruds)
+    return dict(
+        # Ahora inyectamos la lista de cruds (no un dict)
+        CONTROLLERS           = cruds,
+        cookie_error          = request.cookies.get('error'),
+
+        # Paginación
+        options_pagination_crud  = options_pagination_crud,
+        selected_option_crud    = selected_option_crud,
+
+        # Constantes
+        URL_IMG_LOGO           = '/static/img/logousat.png',
+        SYSTEM_NAME            = "chatbotUsatin",
+        HABILITAR_ICON_PAGES   = HABILITAR_ICON_PAGES,
+        STATE_0                = STATE_0,
+        STATE_1                = STATE_1,
+        ACT_STATE_0            = ACT_STATE_0,
+        ACT_STATE_1            = ACT_STATE_1,
+        NOMBRE_CRUD_PAGE       = NOMBRE_CRUD_PAGE,
+        NOMBRE_ADMINPAGES_PAGE = NOMBRE_ADMINPAGES_PAGE,
+        NOMBRE_OPTIONS_COL     = NOMBRE_OPTIONS_COL,
+        NOMBRE_BTN_INSERT      = NOMBRE_BTN_INSERT,
+        NOMBRE_BTN_UPDATE      = NOMBRE_BTN_UPDATE,
+        NOMBRE_BTN_DELETE      = NOMBRE_BTN_DELETE,
+        NOMBRE_BTN_UNACTIVE    = NOMBRE_BTN_UNACTIVE,
+        NOMBRE_BTN_LIST        = NOMBRE_BTN_LIST,
+        NOMBRE_BTN_CONSULT     = NOMBRE_BTN_CONSULT,
+        NOMBRE_BTN_SEARCH      = NOMBRE_BTN_SEARCH,
+        ICON_PAGE_CRUD         = ICON_PAGE_CRUD,
+        ICON_PAGE_REPORT       = ICON_PAGE_REPORT,
+        ICON_PAGE_DASHBOARD    = ICON_PAGE_DASHBOARD,
+        ICON_PAGE_PANEL        = ICON_PAGE_PANEL,
+        ICON_LIST              = ICON_LIST,
+        ICON_CONSULT           = ICON_CONSULT,
+        ICON_SEARCH            = ICON_SEARCH,
+        ICON_INSERT            = ICON_INSERT,
+        ICON_UPDATE            = ICON_UPDATE,
+        ICON_DELETE            = ICON_DELETE,
+        ICON_ACTIVE            = ICON_ACTIVE,
+        ICON_UNACTIVE          = ICON_UNACTIVE,
+        ICON_UNLOCK            = ICON_UNLOCK,
+        ICON_PAGE_NOICON       = f'{ICON_PAGE_NOICON} d_i',
+    )
 
 #################RUTAS#####################
 
@@ -251,9 +314,9 @@ def crud_generico(tabla):
 
             existe_activo = controlador.exists_Activo()
             columnas , filas = controlador.get_table()
+            print(filas)
             primary_key = controlador.get_primary_key()
             table_columns  = list(filas[0].keys()) if filas else []
-            
             CRUD_FORMS = config["crud_forms"]
             crud_list = CRUD_FORMS.get("crud_list")
             crud_search = CRUD_FORMS.get("crud_search")
@@ -291,44 +354,32 @@ def crud_generico(tabla):
 ##################_ PAGINAS EMPLEADO METHOD POST _################## 
 
 @app.route("/insert_row=<tabla>", methods=["POST"])
-# @validar_empleado()
-# @validar_error_crud()
 def crud_insert(tabla):
-    # try:
-        config = CONTROLADORES.get(tabla)
-        if not config:
-            return "Tabla no soportada", 404
+    config = CONTROLADORES.get(tabla)
+    if not config:
+        return "Tabla no soportada", 404
 
-        active = config["active"]
-        no_crud = config.get('no_crud')
+    active = config["active"]
+    no_crud = config.get("no_crud")
 
-        if active is False:
-            return "Tabla no soportada", 404
+    if active is False:
+        return "Tabla no soportada", 404
 
-        controlador = config["controlador"]
-        firma = inspect.signature(controlador.insert_row)
+    controlador = config["controlador"]
+    firma = inspect.signature(controlador.insert_row)
 
-        valores = []
-        for nombre, parametro in firma.parameters.items():
-            if nombre in request.files:
-                archivo = request.files[nombre]
-                if archivo.filename != "":
-                    # nuevo_nombre = guardar_imagen_bd(tabla , '' , archivo)
-                    # valores.append(nuevo_nombre)
-                    pass
-                else:
-                    # Si no se selecciona una nueva imagen, mantener la actual
-                    valores.append(request.form.get(f"{nombre}_actual"))
-            else:
-                valor = request.form.get(nombre)
-                valores.append(valor)
+    valores = []
+    for nombre, _ in firma.parameters.items():
+        valor = request.form.get(nombre)
+        valores.append(valor)
 
-        controlador.insert_row( *valores )
+    controlador.insert_row(*valores)
 
-        if no_crud :
-            return redirect(url_for(no_crud))
-        else:
-            return redirect(url_for('crud_generico', tabla = tabla))
+    if no_crud:
+        return redirect(url_for(no_crud))
+    else:
+        return redirect(url_for("crud_generico", tabla=tabla))
+
     # except Exception as e:
     #     return f"No se aceptan carácteres especiales", 400
 
@@ -421,17 +472,13 @@ def crud_unactive(tabla):
     else:
         return redirect(url_for('crud_generico', tabla = tabla))
 
+#########################################################
+@app.route("/dashboard")
+def dashboard_general():
+    return render_template("dashboard_general.html")
 
 
 
-# @app.route("/preguntar", methods=["POST"])
-# def preguntar():
-#     pregunta_usuario = request.form.get("pregunta")
-#     respuesta = buscar_respuesta_por_palabra(pregunta_usuario)
-#     if not respuesta:
-#         respuesta = "Lo siento, no encontré una respuesta para tu pregunta."
-
-#     return render_template("index_2.html", respuesta=respuesta)
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8000, debug=True)

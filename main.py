@@ -309,7 +309,6 @@ def listar_cruds():
 @app.context_processor
 def inject_globals():
     cruds = listar_cruds()
-    historial = controlador_historial.get_data()
     options_pagination_crud, selected_option_crud = get_options_pagination_crud()
     return dict(
         # Ahora inyectamos la lista de cruds (no un dict)
@@ -324,7 +323,6 @@ def inject_globals():
         URL_IMG_LOGO           = '/static/img/logousat.png',
         SYSTEM_NAME            = "chatbotUsatin",
         HABILITAR_ICON_PAGES   = HABILITAR_ICON_PAGES,
-        historial              =  historial,
         STATE_0                = STATE_0,
         STATE_1                = STATE_1,
         ACT_STATE_0            = ACT_STATE_0,

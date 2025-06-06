@@ -1,0 +1,77 @@
+{% extends "MAESTRA.html" %}
+
+{% block titulo %}
+Panel Administrativo
+{% endblock %}
+
+{% block estilos %}
+<style>
+    .crud_title {
+        margin-bottom: 20px;
+    }
+    .b_text {
+        margin-bottom: 20px;
+        font-size: 120%;
+    }
+    .panel_cell {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 180px;
+        height: 160px;
+        margin: 10px;
+        padding: 20px;
+        border-radius: 12px;
+        background: white;
+        border: 1px solid #ddd;
+        transition: 0.3s ease;
+        font-size: 1.1rem;
+        font-weight: 600;
+        text-align: center;
+        text-decoration: none;
+        color: #333;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+    .panel_cell:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    }
+    .panel_cell i {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block contenido %}
+<div class="block_crud">
+    <h3 class="crud_title">
+        <i class="fas fa-tools"></i>
+        Panel Administrativo
+    </h3>
+</div>
+
+<div class="block_crud b_text">
+    Seleccione una opción:
+</div>
+
+<div class="block_crud block_panel">
+    <a href="{{ url_for('crud_generico', tabla='categoria') }}" class="panel_cell" style="border-color: #2980b9;">
+        <i class="fas fa-list" style="color: #2980b9;"></i>
+        Categorías
+    </a>
+    <a href="{{ url_for('crud_generico', tabla='pregunta') }}" class="panel_cell" style="border-color: #27ae60;">
+        <i class="fas fa-question-circle" style="color: #27ae60;"></i>
+        Preguntas
+    </a>
+    <a href="{{ url_for('crud_generico', tabla='historial') }}" class="panel_cell" style="border-color: #f39c12;">
+        <i class="fas fa-history" style="color: #f39c12;"></i>
+        Historial
+    </a>
+    <a href="{{ url_for('crud_generico', tabla='palabra_clave') }}" class="panel_cell" style="border-color: #f39c12;">
+        <i class="fas fa-key" style="color: #f39c12;"></i>
+        Palabra clave
+    </a>
+</div>
+{% endblock %}

@@ -5,6 +5,7 @@ import controladores.controlador_categoria as controlador_categoria
 import controladores.controlador_historial as controlador_historial
 import controladores.controlador_palabra_clave as controlador_palabra_clave 
 import controladores.controlador_pregunta as controlador_pregunta 
+import controladores.controlador_dashboard as controlador_dashboard
 
 import modelo_semantico
 import os
@@ -85,6 +86,42 @@ def respuesta_directa():
     respuesta = obtener_respuesta_por_titulo(titulo)
     
     return jsonify({"respuesta": respuesta or "No encontré esa pregunta."})
+
+
+@app.route("/panel")
+def panel_administrativo():
+    modulos = [
+        {
+            "id": 1,
+            "key": "categoria",
+            "nombre": "Categorías",
+            "icono": "fas fa-list",
+            "color": "#2980b9",
+        },
+        {
+            "id": 2,
+            "key": "pregunta",
+            "nombre": "Preguntas",
+            "icono": "fas fa-question-circle",
+            "color": "#27ae60",
+        },
+        {
+            "id": 3,
+            "key": "historial",
+            "nombre": "Historial",
+            "icono": "fas fa-history",
+            "color": "#f39c12",
+        },
+        {
+            "id": 3,
+            "key": "palabra_clave",
+            "nombre": "Palabra clave",
+            "icono": "fas fa-key",
+            "color": "#137372",
+        }
+    ]
+    return render_template("dashboard.html", modulos=modulos)
+
 
 @app.route("/preguntar_con_pln", methods=["POST"])
 def preguntar_con_pln():
@@ -561,9 +598,9 @@ def crud_unactive(tabla):
         return redirect(url_for('crud_generico', tabla = tabla))
 
 #########################################################
-@app.route("/dashboard")
-def dashboard_general():
-    return render_template("dashboard_general.html")
+# @app.route("/dashboard")
+# def dashboard_general():
+#     return render_template("dashboard_general.html")
 
 
 

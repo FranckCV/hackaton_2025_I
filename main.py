@@ -58,8 +58,8 @@ ICON_UNLOCK          = configuraciones.ICON_UNLOCK
 def index():
     historial = controlador_historial.get_data()
     cantidad_usuarios = controlador_usuario.get_user_count()
-    cantidad_preguntas_sin_responder = controlador_historial.get_question_count()
-    return render_template("index.html",historial=historial, cantidad_usuarios = cantidad_usuarios, cantidad_preguntas_sin_responder = cantidad_preguntas_sin_responder)  # Si tienes un index.html con interfaz
+    cantidad_historial = controlador_historial.get_question_count()
+    return render_template("index.html",historial=historial, cantidad_usuarios = cantidad_usuarios, cantidad_historial = cantidad_historial)  # Si tienes un index.html con interfaz
 
 @app.route("/categorias")
 def categorias():

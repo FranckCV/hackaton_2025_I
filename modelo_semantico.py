@@ -22,6 +22,7 @@ def buscar_pregunta_similar(texto_usuario, umbral_similitud=0.6):
     mejor_score = similitudes[indice_mejor].item()
 
     if mejor_score >= umbral_similitud:
+        print()
         return preguntas_frecuentes[indice_mejor]['respuesta']
     else:
         return None

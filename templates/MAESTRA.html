@@ -1,40 +1,137 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/css/common_styles/bootstrap.min.css"/>
-    <link rel="stylesheet" href="/static/css/common_styles/all.min.css"/>
-    <link rel="stylesheet" href="/static/css/common_styles/fontawesome.min.css"/>
-    <link rel="stylesheet" href="/static/css/common_styles/fonts.css"/>
-    <link rel="stylesheet" href="/static/css/common_styles/common_style.css"/>
-    {% block estilos %}
-    {% endblock %}
-    <title>
-        {% block titulo %}
-        {% endblock %}| xd
-    </title>
-</head>
-<body class="general_body">
-    <header class="general_element">
-    </header>
 
-    <aside class="general_element">
+    <link rel="shortcut icon" href="{{ URL_IMG_LOGO }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.5.0/remixicon.css" crossorigin="">
+    <link rel="stylesheet" href="/static/css/common_styles/bootstrap.min.css" />
+    <link rel="stylesheet" href="/static/css/common_styles/all.min.css" />
+    <link rel="stylesheet" href="/static/css/common_styles/fonts.css" />
+    <link rel="stylesheet" href="/static/css/common_styles/common_style.css" />
+    <link rel="stylesheet" href="/static/css/common_styles/fontawesome.min.css" />
+    <link rel="stylesheet" href="/static/css/admin_styles.css">
+
+    <style>
+        :root {
+            --color-contrast:rgb(255, 252, 252);
+            --color-base:rgb(111, 15, 15);
+            --color-sec:rgb(169, 119, 119);
+            --color-thr:rgb(108, 16, 16);
+        }
+    </style>
+
+    <title>
+        {% block titulo %}{% endblock %} | {{ SYSTEM_NAME }}
+    </title>
+
+    {% block estilos %}{% endblock %}
+</head>
+
+<body class="general_body">
+    <header class="general_element"></header>
+
+    <aside id="menu_aside" class="general_element">
+        <div class="menu_img">
+            <a href="{{ url_for('index') }}">
+                <img src="{{ URL_IMG_LOGO }}" class="logo_admin" />
+            </a>
+        </div>
+
+        {% for key, titulo, icono in CONTROLLERS %}
+            {% if config.active %}
+                <div class="menu_option {% if request.path == url_for('crud_generico', tabla=key) %}active-modulo{% endif %}">
+                    <a class="menu_title" href="{{ url_for('crud_generico', tabla=key) }}">
+                        <i class="{{ config.icon_page or ICON_PAGE_CRUD }}"></i>
+                        <p>{{ config.titulo | capitalize }}</p>
+                    </a>
+                </div>
+            {% endif %}
+        {% endfor %}
     </aside>
 
+
     <section class="general_element">
-        {% block contenido %}
-        {% endblock %}
+        <div class="section_content">
+            {% block contenido %}{% endblock %}
+        </div>
     </section>
 
-    <footer class="general_element">
-    </footer>
+    <footer class="general_element"></footer>
+
+    {% if cookie_error %}
+        <div id="modalError" class="modal modalMsg modalError ver_modalMsg">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                    </div>
+                    <div class="modal-body">
+                        <p>{{ cookie_error }}</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="modal_button_cancelar" id="cancelarError">
+                            <i class="fa fa-times" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <div id="overlayImage" class="overlayImage" onclick="closeImage()">
+        <img id="enlargedImage" class="enlarged-image" />
+    </div>
 
     <script src="/static/js/common_scripts/bootstrap.bundle.min.js"></script>
-    <script src="/static/js/common_scripts/bootstrap.min.js"></script>
     <script src="/static/js/common_scripts/common_script.js"></script>
-    {% block scripts %}
-    {% endblock %}
+
+    <script>
+        const modalError = document.getElementById('modalError');
+        if (modalError) {
+            function closeModalError() {
+                document.cookie = "error=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                modalError.classList.remove('ver_modalMsg');
+            }
+
+            modalError.querySelector('#cancelarError').onclick = function () {
+                closeModalError();
+            };
+
+            document.querySelectorAll('input[type="submit"]').forEach(button => {
+                button.onclick = function () {
+                    closeModalError();
+                }
+            });
+        }
+    </script>
+
+    <script>
+        function openImage(src) {
+            const overlay = document.getElementById('overlayImage');
+            const enlargedImage = document.getElementById('enlargedImage');
+            enlargedImage.src = src;
+            overlay.style.display = 'flex';
+        }
+
+        function closeImage() {
+            const overlay = document.getElementById('overlayImage');
+            overlay.style.display = 'none';
+        }
+
+        document.addEventListener('click', function (event) {
+            if (event.target.classList.contains('clickable-image')) {
+                openImage(event.target.src);
+            }
+        });
+    </script>
+    <script src="/static/js/crudModal.js"></script>
+
+    {% block scripts %}{% endblock %}
+
 
 </body>
+
 </html>

@@ -1,0 +1,241 @@
+/* Estilo de tabla moderno en tonalidades rojas */
+
+/* Título de la sección */
+.section-title {
+    font-size: 28px;
+    font-weight: 700;
+    /* color: #7f1d1d; */
+    margin: 0 0 32px 0;
+    position: relative;
+    display: inline-block;
+    place-self: start;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, #dc2626, #ef4444);
+    border-radius: 2px;
+}
+
+.section-header {
+    margin-bottom: 24px;
+}
+
+/* CSS Tabla Minimalista Profesional - Tonalidades Rojas */
+
+/* Título de la tabla */
+.tabla-titulo {
+    font-size: 24px;
+    font-weight: 600;
+    color: #991b1b;
+    margin: 0 0 24px 0;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #fecaca;
+    letter-spacing: -0.025em;
+    line-height: 1.2;
+}
+
+/* Sección general */
+.section-header {
+    margin-bottom: 32px;
+}
+
+.section-content {
+    background: #ffffff;
+}
+
+/* Contenedor de la tabla */
+.table-container {
+    background: #ffffff;
+    border: 1px solid #fee2e2;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(220, 38, 38, 0.06);
+}
+
+/* Tabla principal */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+    font-size: 14px;
+}
+
+/* Header de la tabla */
+.table thead {
+    background: #dc2626;
+}
+
+.table thead th {
+    padding: 18px 24px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 13px;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: none;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: #dc2626;
+}
+
+/* Filas del cuerpo */
+.table tbody tr {
+    border-bottom: 1px solid #fee2e2;
+    transition: background-color 0.2s ease;
+}
+
+.table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.table tbody tr:hover {
+    background-color: #fef2f2;
+}
+
+/* Celdas del cuerpo */
+.table tbody td {
+    padding: 18px 24px;
+    color: #374151;
+    border: none;
+    vertical-align: middle;
+    line-height: 1.5;
+}
+
+.table tbody td:first-child {
+    font-weight: 500;
+    color: #7f1d1d;
+}
+
+.table tbody td:last-child {
+    color: #6b7280;
+    font-size: 13px;
+    font-family: 'SF Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
+}
+
+/* Mensaje de sin datos */
+.table tbody td.text-center {
+    text-align: center;
+    color: #9ca3af;
+    font-style: italic;
+    padding: 40px 24px;
+    background: #fefefe;
+}
+
+/* Contenedor principal */
+.main-content {
+    background: #fafafa;
+    min-height: 100vh;
+}
+
+/* .content-section {
+    max-width: 1200px;
+    margin: 0 auto;
+} */
+
+/* Estados y variaciones */
+.table tbody tr:nth-child(even) {
+    background-color: #fefefe;
+}
+
+.table tbody tr:nth-child(odd) {
+    background-color: #ffffff;
+}
+
+.table tbody tr:nth-child(even):hover,
+.table tbody tr:nth-child(odd):hover {
+    background-color: #fef2f2;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .tabla-titulo {
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .main-content {
+        padding: 16px;
+    }
+    
+    .table thead th,
+    .table tbody td {
+        padding: 14px 16px;
+        font-size: 13px;
+    }
+    
+    .table thead th {
+        font-size: 12px;
+    }
+    
+    .table tbody td:last-child {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .tabla-titulo {
+        font-size: 18px;
+    }
+    
+    .table thead th,
+    .table tbody td {
+        padding: 12px 14px;
+    }
+    
+    .table-container {
+        border-radius: 6px;
+    }
+}
+
+      /* Stats Cards */
+        .stats-grid {
+            display: flex;
+            width: 100%;
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-left: 4px solid #dc2626;
+            transition: transform 0.3s ease;
+            width: 100%;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .stat-card h3 {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #dc2626;
+            margin-bottom: 8px;
+        }
+
+        .stat-change {
+            font-size: 12px;
+            color: #059669;
+        }
+
+        .stat-change.negative {
+            color: #dc2626;
+        }

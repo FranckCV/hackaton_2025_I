@@ -60,3 +60,14 @@ INSERT INTO palabra_clave (palabra, PREGUNTAid) VALUES ('proyecto', 16);
 INSERT INTO palabra_clave (palabra, PREGUNTAid) VALUES ('tesis', 16);
 INSERT INTO palabra_clave (palabra, PREGUNTAid) VALUES ('aprobado', 16);
 
+INSERT INTO historial (mensaje, fecha) VALUES
+('¿Cuáles son los requisitos para postular a Ingeniería de Sistemas?', '2025-06-01 09:15:00'),
+('¿Dónde puedo ver mi horario de clases?', '2025-06-01 10:23:45'),
+('No entiendo cómo funciona la matrícula online.', '2025-06-02 14:10:12'),
+('¿Cuándo empiezan las clases del próximo ciclo?', '2025-06-03 08:00:00'),
+('¿Qué sucede si pierdo mi carné universitario?', '2025-06-03 16:35:20'),
+('¿Dónde está ubicado el laboratorio de redes?', '2025-06-04 11:45:30'),
+('¿Cómo solicito un certificado de estudios?', '2025-06-04 18:25:10'),
+('¿Qué cursos electivos están disponibles para mi carrera?', '2025-06-05 13:05:00'),
+('Tengo problemas para ingresar al aula virtual.', '2025-06-05 17:50:00'),
+('¿Qué hacer si no me aparece una asignatura en el sistema?', '2025-06-06 08:20:00');

@@ -8,7 +8,7 @@ import controladores.controlador_pregunta as controlador_pregunta
 import controladores.controlador_documento as controlador_documento 
 import controladores.controlador_dashboard as controlador_dashboard
 
-import modelo_semantico
+import _ARCHIVADO.modelo_semantico as modelo_semantico
 import os
 import requests
 from datetime import datetime, date
@@ -55,7 +55,9 @@ ICON_UNLOCK          = configuraciones.ICON_UNLOCK
 
 @app.route("/")
 def index():
-    return render_template("index.html")  # Si tienes un index.html con interfaz
+    historial = controlador_historial.get_data()
+
+    return render_template("index.html",historial=historial)  # Si tienes un index.html con interfaz
 
 @app.route("/categorias")
 def categorias():
@@ -211,31 +213,31 @@ CONTROLADORES = {
         }
     },
 
-    "historial": {
-    "active": True,
-    "titulo": "historial de interacciones",
-    "nombre_tabla": "historial",
-    "controlador": controlador_historial,
-    "icon_page": "fa-solid fa-clock-rotate-left",
-    "filters": [
-        ['activo', f'{TITLE_STATE}', get_options_active()],
-    ],
-    "fields_form": [
-#     ID/NAME     LABEL              PLACEHOLDER         TYPE       REQUIRED   ABLE/DISABLE   DATOS
-        ['id',       'ID',              'ID',               'text',    True,     False,         None],
-        ['mensaje',  'Mensaje',         'Mensaje recibido', 'text',    True,     True,          None],
-        ['activo',   f'{TITLE_STATE}',  'Activo',           'p',       True,     False,         None],
-    ],
-    "crud_forms": {
-        "crud_list": False,
-        "crud_search": True,
-        "crud_consult": False,
-        "crud_insert": False,
-        "crud_update": False,
-        "crud_delete": False,
-        "crud_unactive": True,
-    }
-},
+#     "historial": {
+#     "active": True,
+#     "titulo": "historial de interacciones",
+#     "nombre_tabla": "historial",
+#     "controlador": controlador_historial,
+#     "icon_page": "fa-solid fa-clock-rotate-left",
+#     "filters": [
+#         ['activo', f'{TITLE_STATE}', get_options_active()],
+#     ],
+#     "fields_form": [
+# #     ID/NAME     LABEL              PLACEHOLDER         TYPE       REQUIRED   ABLE/DISABLE   DATOS
+#         ['id',       'ID',              'ID',               'text',    True,     False,         None],
+#         ['mensaje',  'Mensaje',         'Mensaje recibido', 'text',    True,     True,          None],
+#         ['activo',   f'{TITLE_STATE}',  'Activo',           'p',       True,     False,         None],
+#     ],
+#     "crud_forms": {
+#         "crud_list": False,
+#         "crud_search": True,
+#         "crud_consult": False,
+#         "crud_insert": False,
+#         "crud_update": False,
+#         "crud_delete": False,
+#         "crud_unactive": True,
+#     }
+# },
     "pregunta": {
         "active" : True ,
         "titulo": "Pregunta",
@@ -295,7 +297,7 @@ CONTROLADORES = {
         "icon_page": 'fa-solid fa-file',
         "filters": [
             ['preguntaid', 'Seleccione una pregunta', lambda: controlador_pregunta.get_options() ],
-                        ['activo', f'{TITLE_STATE}', get_options_active() ],
+                        # ['activo', f'{TITLE_STATE}', get_options_active() ],
 
         ] ,
         "fields_form": [
@@ -305,7 +307,7 @@ CONTROLADORES = {
             ['descripcion', 'Descripción',     'Descripción', 'textarea', False,     True  ,        None ],
              ['url', 'Url',     'Url', 'textarea', False,     True  ,        None ],
             ['preguntaid',  'Título de pregunta', 'Elegir pregunta', 'select', True ,True, [lambda: controlador_pregunta.get_options() , 'titulo_pre' ] ],
-             ['activo',      f'{TITLE_STATE}',  'Activo',      'p',        True ,     False ,        None ],
+            #  ['activo',      f'{TITLE_STATE}',  'Activo',      'p',        True ,     False ,        None ],
         ],
         "crud_forms": {
             "crud_list": True ,
@@ -314,7 +316,7 @@ CONTROLADORES = {
             "crud_insert": True ,
             "crud_update": True ,
             "crud_delete": True ,
-            "crud_unactive": True ,
+            "crud_unactive": False ,
         }
     },
 }
@@ -379,7 +381,6 @@ def inject_globals():
     cruds = listar_cruds()
     options_pagination_crud, selected_option_crud = get_options_pagination_crud()
     return dict(
-        # Ahora inyectamos la lista de cruds (no un dict)
         CONTROLLERS           = cruds,
         cookie_error          = request.cookies.get('error'),
 

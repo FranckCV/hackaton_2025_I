@@ -43,7 +43,7 @@ def get_table():
             pa.titulo ,
             pa.descripcion,
             pa.url,
-            pa.activo,
+            # pa.activo,
             p.titulo as titulo_pre 
         from {table_name} pa
         inner join pregunta p on p.id = pa.preguntaid
@@ -54,7 +54,7 @@ def get_table():
         'titulo' : ['titulo' , 2] , 
         'descripcion' : ['descripcion' , 3] , 
         'url' : ['url' , 2] , 
-        'activo' : ['activo' , 1] , 
+        # 'activo' : ['activo' , 1] , 
         'titulo_pre' : ['titulo' , 2],
     }
     filas = sql_select_fetchall(sql)

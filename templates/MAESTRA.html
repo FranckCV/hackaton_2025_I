@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="/static/css/common_styles/fonts.css" />
     <link rel="stylesheet" href="/static/css/common_styles/fontawesome.min.css" />
     <link rel="stylesheet" href="/static/css/common_styles/common_style.css" />
+        <link rel="stylesheet" href="/static/css/admin_styles.css" />
+
 
     <title>
         {% block titulo %}{% endblock %} | {{ SYSTEM_NAME }}
@@ -36,6 +38,13 @@
                 </div>
                 <div class="logo-text">ChatbotUsatin</div>
             </div>
+
+    <div class="menu_option">
+      <a class="mu_page" href="{{url_for('index')}}">
+<i class="fa-solid fa-table-columns"></i>
+       Panel
+      </a>
+    </div>
 
   {% for key, titulo, icono in CONTROLLERS %}
     <div class="menu_option{% if request.path == url_for('crud_generico', tabla=key) %} active-modulo{% endif %}">

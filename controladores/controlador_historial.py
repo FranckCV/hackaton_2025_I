@@ -98,3 +98,14 @@ def get_report_test():
     }
     filas = sql_select_fetchall(sql)
     return columnas, filas
+
+def get_data():
+    sql = f'''
+        SELECT 
+            h.mensaje,
+            h.fecha
+        FROM historial h
+        ORDER BY h.fecha DESC
+    '''
+    filas = sql_select_fetchall(sql)
+    return filas

@@ -1,5 +1,4 @@
-# import pymysql
-# from pymysql.cursors import DictCursor
+
 import requests
 
 def request_api_sql( tipo , sql, args= None ):

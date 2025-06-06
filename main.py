@@ -3,6 +3,9 @@ import configuraciones
 import controladores.controlador_pregunta as controlador_pregunta
 import controladores.controlador_categoria as controlador_categoria
 import controladores.controlador_historial as controlador_historial
+import controladores.controlador_palabra_clave as controlador_palabra_clave 
+import controladores.controlador_pregunta as controlador_pregunta 
+
 import modelo_semantico
 import os
 import requests
@@ -195,7 +198,57 @@ CONTROLADORES = {
         "crud_unactive": True,
     }
 },
-
+    "pregunta": {
+        "active" : True ,
+        "titulo": "Pregunta",
+        "nombre_tabla": "pregunta",
+        "controlador": controlador_pregunta,
+        "icon_page": 'fa-solid fa-question',
+        "filters": [
+            ['categoriaid', 'Categoría de pregunta', lambda: controlador_categoria.get_options() ],
+        ] ,
+        "fields_form": [
+#            ID/NAME          LABEL               PLACEHOLDER      TYPE         REQUIRED   ABLE/DISABLE   DATOS
+            ['id',            'ID',               'ID',            'text',      False ,    False,         True ],
+            ['titulo',      'Título',          'Título',      'text',     True ,     True  ,        None ],
+            ['respuesta', 'Respuesta',     'Respuesta', 'textarea', False,     True  ,        None ],
+            ['categoriaid',  'Nombre de motivo de reclamo', 'Elegir motivo de reclamo', 'select', True ,True, [lambda: controlador_categoria.get_options() , 'nom_cat' ] ],
+        ],
+        "crud_forms": {
+            "crud_list": True ,
+            "crud_search": True ,
+            "crud_consult": True ,
+            "crud_insert": True ,
+            "crud_update": True ,
+            "crud_delete": True ,
+            "crud_unactive": True ,
+        }
+    },
+    "palabra_clave": {
+        "active" : True ,
+        "titulo": "palabra clave",
+        "nombre_tabla": "palabra_clave",
+        "controlador": controlador_palabra_clave,
+        "icon_page": 'fa-solid fa-key',
+        "filters": [
+            ['preguntaid', 'Pregunta', lambda: controlador_pregunta.get_options() ],
+        ] ,
+        "fields_form": [
+#            ID/NAME          LABEL               PLACEHOLDER      TYPE         REQUIRED   ABLE/DISABLE   DATOS
+            ['id',            'ID',               'ID',            'text',      False ,    False,         True ],
+            ['palabra',      'Palabra',          'Palabra',      'text',     True ,     True  ,        None ],
+            ['preguntaid',  'Título de pregunta', 'Elegir título de pregunta', 'select', True ,True, [lambda: controlador_pregunta.get_options() , 'titulo_pre' ] ],
+        ],
+        "crud_forms": {
+            "crud_list": True ,
+            "crud_search": True ,
+            "crud_consult": True ,
+            "crud_insert": True ,
+            "crud_update": True ,
+            "crud_delete": True ,
+            "crud_unactive": True ,
+        }
+    },
 }
 
 REPORTES = {

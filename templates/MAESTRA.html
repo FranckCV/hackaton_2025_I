@@ -33,24 +33,23 @@
 <body class="general_body">
     <header class="general_element"></header>
 
-    <aside id="menu_aside" class="general_element">
-        <div class="menu_img">
-            <a href="{{ url_for('index') }}">
-                <img src="{{ URL_IMG_LOGO }}" class="logo_admin" />
-            </a>
-        </div>
+<aside id="menu_aside" class="general_element">
+  <div class="menu_img">
+    <a href="{{ url_for('index') }}">
+      <img src="{{ URL_IMG_LOGO }}" class="logo_admin" />
+    </a>
+  </div>
 
-        {% for key, titulo, icono in CONTROLLERS %}
-            {% if config.active %}
-                <div class="menu_option {% if request.path == url_for('crud_generico', tabla=key) %}active-modulo{% endif %}">
-                    <a class="menu_title" href="{{ url_for('crud_generico', tabla=key) }}">
-                        <i class="{{ config.icon_page or ICON_PAGE_CRUD }}"></i>
-                        <p>{{ config.titulo | capitalize }}</p>
-                    </a>
-                </div>
-            {% endif %}
-        {% endfor %}
-    </aside>
+  {% for key, titulo, icono in CONTROLLERS %}
+    <div class="menu_option{% if request.path == url_for('crud_generico', tabla=key) %} active-modulo{% endif %}">
+      <a class="mu_page" href="{{ url_for('crud_generico', tabla=key) }}">
+        <i class="{{ icono or ICON_PAGE_CRUD }}"></i>
+        <p>{{ titulo }}</p>
+      </a>
+    </div>
+  {% endfor %}
+</aside>
+
 
 
     <section class="general_element">

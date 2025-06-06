@@ -75,3 +75,15 @@ def get_options():
     '''
     filas = sql_select_fetchall(sql)
     return [(fila['id'], fila["mensaje"]) for fila in filas]
+
+
+def get_data():
+    sql = f'''
+        SELECT 
+            h.mensaje,
+            h.fecha
+        FROM historial h
+        ORDER BY h.fecha DESC
+    '''
+
+    return sql_select_fetchall(sql)

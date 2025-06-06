@@ -10,18 +10,8 @@
     <link rel="stylesheet" href="/static/css/common_styles/bootstrap.min.css" />
     <link rel="stylesheet" href="/static/css/common_styles/all.min.css" />
     <link rel="stylesheet" href="/static/css/common_styles/fonts.css" />
-    <link rel="stylesheet" href="/static/css/common_styles/common_style.css" />
     <link rel="stylesheet" href="/static/css/common_styles/fontawesome.min.css" />
-    <link rel="stylesheet" href="/static/css/admin_styles.css">
-
-    <style>
-        :root {
-            --color-contrast:rgb(255, 252, 252);
-            --color-base:rgb(111, 15, 15);
-            --color-sec:rgb(169, 119, 119);
-            --color-thr:rgb(108, 16, 16);
-        }
-    </style>
+    <link rel="stylesheet" href="/static/css/common_styles/common_style.css" />
 
     <title>
         {% block titulo %}{% endblock %} | {{ SYSTEM_NAME }}
@@ -34,11 +24,18 @@
     <header class="general_element"></header>
 
 <aside id="menu_aside" class="general_element">
+    <!--
   <div class="menu_img">
     <a href="{{ url_for('index') }}">
       <img src="{{ URL_IMG_LOGO }}" class="logo_admin" />
     </a>
-  </div>
+  </div>-->
+              <div class="logo-section">
+                <div class="logo">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="logo-text">ChatbotUsatin</div>
+            </div>
 
   {% for key, titulo, icono in CONTROLLERS %}
     <div class="menu_option{% if request.path == url_for('crud_generico', tabla=key) %} active-modulo{% endif %}">

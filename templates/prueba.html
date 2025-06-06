@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block titulo %}Dashboard Chatbot{% endblock %} | {{ SYSTEM_NAME }}</title>
+      <link rel="shortcut icon" href="{{ URL_IMG_LOGO }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.5.0/remixicon.css" crossorigin="">
+    <link rel="stylesheet" href="/static/css/common_styles/bootstrap.min.css" />
+    <link rel="stylesheet" href="/static/css/common_styles/all.min.css" />
+    <link rel="stylesheet" href="/static/css/common_styles/fonts.css" />
+    <link rel="stylesheet" href="/static/css/common_styles/fontawesome.min.css" />
+
+    <link rel="stylesheet" href="/static/css/prueba.css" />
+
+    {% block estilos %}{% endblock %}
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="sidebar" id="sidebar">
+            <div class="logo-section">
+                <div class="logo">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div class="logo-text">USAT</div>
+                <div class="logo-subtitle">Chatbot Admin</div>
+            </div>
+            
+            <nav class="nav-menu">
+                {% for key, titulo_item, icono_item in CONTROLLERS %}
+                    <a 
+                      href="{{ url_for('crud_generico', tabla=key) }}" 
+                      class="nav-item{% if request.path == url_for('crud_generico', tabla=key) %} active{% endif %}"
+                    >
+                        <i class="{{ icono_item }}"></i>
+                        <span>{{ titulo_item }}</span>
+                    </a>
+                {% endfor %}
+            </nav>
+        </div>
+
+        
+
+        <div class="main-content">
+            <div id="dashboard-section" class="section active">
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Actividad Reciente</h2>
+                        <a href="#" class="btn btn-primary">Ver Todo</a>
+                    </div>
+                    <div class="section-content">
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Mensaje</th>
+                                        <th>Fecha</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recent-activity">
+                                    {# Aquí generamos cada fila a partir de la lista 'historial' #}
+                                    {% for fila in historial %}
+                                        <tr>
+                                            <td>{{ fila.mensaje }}</td>
+                                            <td>{{ fila.fecha }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    {# Si no hay elementos, por ejemplo: #}
+                                    {% if historial|length == 0 %}
+                                        <tr>
+                                            <td colspan="2" class="text-center">No hay datos recientes.</td>
+                                        </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle Sidebar (si quieres colapsar/expandir)
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+
+        // Si tuvieras más secciones, podrías alternar su visibilidad con esta función:
+        function showSection(sectionName) {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => {
+                section.style.display = 'none';
+            });
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.classList.remove('active');
+            });
+            const targetSection = document.getElementById(sectionName + '-section');
+            if (targetSection) {
+                targetSection.style.display = 'block';
+            }
+            event.target.closest('.nav-item').classList.add('active');
+        }
+    </script>
+</body>
+</html>

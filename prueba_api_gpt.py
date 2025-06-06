@@ -1,4 +1,3 @@
-GPT_API_KEY = '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'
 
 import openai
 from api_bd import sql_select_fetchall

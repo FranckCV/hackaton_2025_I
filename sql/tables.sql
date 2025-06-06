@@ -32,7 +32,16 @@ CREATE TABLE historial (
   fecha       datetime DEFAULT CURRENT_TIMESTAMP NOT NULL, 
   categoriaid int(10), 
   PRIMARY KEY (id));
+CREATE TABLE documento (
+  id          int(11) NOT NULL AUTO_INCREMENT, 
+  titulo      varchar(150) NOT NULL, 
+  descripcion text, 
+  url         text NOT NULL, 
+  activo      tinyint(1) NOT NULL, 
+  preguntaid  int(10), 
+  PRIMARY KEY (id));
 ALTER TABLE pregunta ADD CONSTRAINT FKpregunta124192 FOREIGN KEY (CATEGORIAid) REFERENCES categoria (id);
 ALTER TABLE palabra_clave ADD CONSTRAINT FKpalabra_cl896610 FOREIGN KEY (PREGUNTAid) REFERENCES pregunta (id);
 ALTER TABLE estado_usuario ADD CONSTRAINT FKestado_usu784846 FOREIGN KEY (categoriaid) REFERENCES categoria (id);
 ALTER TABLE historial ADD CONSTRAINT FKhistorial675424 FOREIGN KEY (categoriaid) REFERENCES categoria (id);
+ALTER TABLE documento ADD CONSTRAINT FKdocumento246863 FOREIGN KEY (preguntaid) REFERENCES pregunta (id);

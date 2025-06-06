@@ -41,7 +41,7 @@
     <div class="menu_option{% if request.path == url_for('crud_generico', tabla=key) %} active-modulo{% endif %}">
       <a class="mu_page" href="{{ url_for('crud_generico', tabla=key) }}">
         <i class="{{ icono or ICON_PAGE_CRUD }}"></i>
-        <p>{{ titulo }}</p>
+        Gestión de <p>{{ titulo }}</p>
       </a>
     </div>
   {% endfor %}

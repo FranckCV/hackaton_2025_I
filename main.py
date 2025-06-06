@@ -5,6 +5,7 @@ import controladores.controlador_categoria as controlador_categoria
 import controladores.controlador_historial as controlador_historial
 import controladores.controlador_palabra_clave as controlador_palabra_clave 
 import controladores.controlador_pregunta as controlador_pregunta 
+import controladores.controlador_documento as controlador_documento 
 
 import modelo_semantico
 import os
@@ -148,7 +149,7 @@ ERRORES = {
 CONTROLADORES = {
     "categoria": {
         "active" : True ,
-        "titulo": "categoría de preguntas",
+        "titulo": "categoría",
         "nombre_tabla": "categoria",
         "controlador": controlador_categoria,
         "icon_page": 'fas fa-tags',
@@ -238,6 +239,36 @@ CONTROLADORES = {
             ['id',            'ID',               'ID',            'text',      False ,    False,         True ],
             ['palabra',      'Palabra',          'Palabra',      'text',     True ,     True  ,        None ],
             ['preguntaid',  'Título de pregunta', 'Elegir título de pregunta', 'select', True ,True, [lambda: controlador_pregunta.get_options() , 'titulo_pre' ] ],
+        ],
+        "crud_forms": {
+            "crud_list": True ,
+            "crud_search": True ,
+            "crud_consult": True ,
+            "crud_insert": True ,
+            "crud_update": True ,
+            "crud_delete": True ,
+            "crud_unactive": True ,
+        }
+    },
+     "documento": {
+        "active" : True ,
+        "titulo": "Documento",
+        "nombre_tabla": "documento",
+        "controlador": controlador_documento,
+        "icon_page": 'fa-solid fa-file',
+        "filters": [
+            ['preguntaid', 'Seleccione una pregunta', lambda: controlador_pregunta.get_options() ],
+                        ['activo', f'{TITLE_STATE}', get_options_active() ],
+
+        ] ,
+        "fields_form": [
+#            ID/NAME          LABEL               PLACEHOLDER      TYPE         REQUIRED   ABLE/DISABLE   DATOS
+            ['id',            'ID',               'ID',            'text',      False ,    False,         True ],
+            ['titulo',      'Título',          'Título',      'text',     True ,     True  ,        None ],
+            ['descripcion', 'Descripción',     'Descripción', 'textarea', False,     True  ,        None ],
+             ['url', 'Url',     'Url', 'textarea', False,     True  ,        None ],
+            ['preguntaid',  'Título de pregunta', 'Elegir pregunta', 'select', True ,True, [lambda: controlador_pregunta.get_options() , 'titulo_pre' ] ],
+             ['activo',      f'{TITLE_STATE}',  'Activo',      'p',        True ,     False ,        None ],
         ],
         "crud_forms": {
             "crud_list": True ,
@@ -552,6 +583,7 @@ def crud_unactive(tabla):
     controlador = config["controlador"]
     existe_activo = controlador.exists_Activo()
     primary_key = controlador.get_primary_key()
+    print(primary_key)
 
     if existe_activo:
         if isinstance(primary_key, list):

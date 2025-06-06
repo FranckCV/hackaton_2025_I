@@ -7,6 +7,7 @@ import controladores.controlador_palabra_clave as controlador_palabra_clave
 import controladores.controlador_pregunta as controlador_pregunta 
 import controladores.controlador_documento as controlador_documento 
 import controladores.controlador_dashboard as controlador_dashboard
+import controladores.controlador_usuario as controlador_usuario
 
 import _ARCHIVADO.modelo_semantico as modelo_semantico
 import os
@@ -56,8 +57,9 @@ ICON_UNLOCK          = configuraciones.ICON_UNLOCK
 @app.route("/")
 def index():
     historial = controlador_historial.get_data()
-
-    return render_template("index.html",historial=historial)  # Si tienes un index.html con interfaz
+    cantidad_usuarios = controlador_usuario.get_user_count()
+    cantidad_preguntas_sin_responder = controlador_historial.get_question_count()
+    return render_template("index.html",historial=historial, cantidad_usuarios = cantidad_usuarios, cantidad_preguntas_sin_responder = cantidad_preguntas_sin_responder)  # Si tienes un index.html con interfaz
 
 @app.route("/categorias")
 def categorias():

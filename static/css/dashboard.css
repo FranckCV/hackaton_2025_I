@@ -1,6 +1,6 @@
 
 .section-title {
-    font-size: 28px;
+    font-size: 30px;
     font-weight: 700;
     /* color: #7f1d1d; */
     margin: 0 0 32px 0;
@@ -27,7 +27,7 @@
 
 /* Título de la tabla */
 .tabla-titulo {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: 600;
     margin: 0 0 24px 0;
     padding-bottom: 12px;

@@ -109,3 +109,10 @@ def get_data():
     '''
     filas = sql_select_fetchall(sql)
     return filas
+
+def get_question_count():
+    sql = '''
+        SELECT COUNT(*) AS cantidad_historial FROM historial
+    '''
+    resultado = sql_select_fetchall(sql)
+    return resultado[0]['cantidad_historial'] if resultado else 0

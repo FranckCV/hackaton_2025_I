@@ -1,53 +1,452 @@
-:root {    
-    /* --height-header1: 8vh; */
-    /* --height-header2: 10vh; */
-    /* --height-nav: 10vh; */
-    /* --height-main-header: calc( var(--height-header1) + var(--height-header2) + var(--height-nav)); */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300&family=Raleway:wght@100&display=swap');
+
+
+:root {
+    --color1: color-mix(in srgb, var(--color-base) 100%, var(--color-contrast) 0%);
+    --color2: color-mix(in srgb, var(--color-base) 100%, var(--color-contrast) 30%);
+    --color3: color-mix(in srgb, var(--color1) 100%, black 30%);
+    --color4: color-mix(in srgb, var(--color1) 40%, rgb(255, 255, 255) 90%);
+    --color5: color-mix(in srgb, var(--color1) 70%, var(--color2) 30%);
+    --color6: color-mix(in srgb, var(--color1) 70%, var(--color3) 90%);
+    --color7: color-mix(in srgb, var(--color1) 70%, var(--color3) 0%);
+    --color8: color-mix(in srgb, var(--color1) 70%, black 50%);
+    --color9: color-mix(in srgb, var(--color1) 7.5%, var(--color-contrast) 100%);
+    --color10: color-mix(in srgb, var(--color1) 100%, var(--color-contrast) 100%);
+    --color11: color-mix(in srgb, var(--color4) 100%, var(--color-sec) 100%);
+    --color12: color-mix(in srgb, var(--color-sec) 20%, transparent 80%);
+    --color13: color-mix(in srgb, var(--color1) 40%, var(--color-sec) 30%);
+    --color14: color-mix(in srgb, var(--color4) 90%, #1e1e1e 90%);
+    --color15: color-mix(in srgb, var(--color-base) 50%, var(--color-sec) 100%);
+    --color16: color-mix(in srgb, var(--color-sec) 60%, white 90%);
+    --color17: color-mix(in srgb, var(--color11) 100%, var(--color3) 80%);
+    --color18: color-mix(in srgb, var(--color-base) 60%, var(--color-sec) 20%);
+    --color19: var(--color-thr);
+    --color20: color-mix(in srgb, var(--color4) 100%, color-mix(in srgb, #00000069 100%, transparent 68%) 40%);
+
+    /* --color19: color-mix(in srgb, var(--color-base) 65%, var(--color-sec) 65%); */
+    /* --color19: color-mix(in srgb, #00cee9 65%, color-mix(in srgb , #1d4c82 100% , white 70% ) 35%); */
+    /* --color19: color-mix(in srgb, color-mix(in srgb, var(--color-base) 45%, var(--color-sec)) 90%, white 10%); */
+
+    --light-color: #f8f9fa;
+    --dark-color: color-mix(in srgb, var(--color-base) 5%, rgb(35, 35, 35) 100%);
+    --color0: rgb(33, 37, 41);
+
     
-    /* --size-bubble-cart: 5vw;
-    --size-bubble-cart-tab: 3.5vw;
-    --size-bubble-cart-pc: 2.1vw;
+    --color-background: color-mix(in srgb, var(--color-contrast) 30%, var(--color-contrast) 100%);
+    --primary-color: #0066cc;
+    --accent-color: #ff6600;
+    --text-color: #333333;
+    --light-gray: #f5f5f5;
+    --border-color: #dddddd;
+    --success-color: #28a745;
+    --error-color: #dc3545;
+    
+    --color-cancel: darkred;
+    --color-back: rgb(99, 99, 99);
+    --color-acept: #006c16;
 
-    --border-article: 50px;
-    --border-title: 70px;
-    --border-item: 25px;
-    --border-product: 10px;
-    --border-tag: 25px;
-    --border-menu: 10px;
-    --border-radius-element: 5px;
+    --color-access: var(--color15);
+    --color-search: var(--color1);
+    --color-consult: color-mix(in srgb, var(--color5) 100%, var(--color-contrast) 15%);
+    --color-insert: color-mix(in srgb, var(--color5) 50%, #0cc84e 100%) !important;
+    --color-update: color-mix(in srgb, var(--color5) 50%, #ffd900 100%);
+    --color-active: color-mix(in srgb, var(--color5) 50%, #57e18c 100%);
+    --color-unactive: color-mix(in srgb, var(--color5) 70%, #959595 80%);
+    --color-delete: color-mix(in srgb, var(--color5) 50%, #ae0e2e 100%);
 
-    --font-icon-cel: 20px;
-    --font-icon-tab: 2.5vw;
-    --font-icon-pc: 1.55vw; */
+    --color-crud: var(--color1);
+    --color-report: var(--color15);
+    --color-dashboard: var(--color16);
+}
 
-    /* --color1: #0C0A3E;
-    --color2: #1e1c7a;
-    --color3: #fff;
-    --color4: #2756f0;
-    --color5: #218aec;
-    --color6: #ffffff;
-    --color7: #040136;
-    --color8: #02011f;
-    --color9: #3532d3;
-    --color10: #2709ac;
-    --color-title1: #00095c;
-    --color-title2: #00223d;
-    --font1: #000;
-    --font2: #fff;
-    --font3: #fff; */
+*:not(i) {
+    font-family: Poppins, sans-serif !important;
+    /* font-weight: bold; */
+    transition: 0.15s ease-in-out;
+    /* text-transform: uppercase; */
+}
 
-    --height-header: 20vh;
-    --height-footer: 50vh;
-    --height-aside: 90vh;
-    --height-section: 1vh;
-    --color-background: #2a2b2c;
-    --color1: #006b96;
-    --color2: #002a64;
-    --color3: #c7309a;
-    --color4: #02020e;
+header.general_element {
+    /* grid-area: ge_header; */
+    position: sticky;
+    top: 0;
+    background-color: var(--color4);
+    height: var(--height-header);
+    /* display: flex; */
+    z-index: 999999;
+}
+
+aside.general_element {
+    font-size: 80%;
+    grid-area: ge_aside;
+    display: flex;
+    width: var(--width-aside);
+
+    position: fixed;
+    height: 100%;
+    overflow-y: scroll;
+    z-index: 999;
+    left: 0;
+    transition: 0.15s ease-in-out;
+}
+
+aside::-webkit-scrollbar {
+    display: none;
+}
+
+aside.desplegar {
+    left: calc(-1 * var(--width-aside));
+}
+
+section.general_element {
+    font-size: 80%;
+    grid-area: ge_section;
+    height: 100%;
+    align-items: center;
+    display: flex;
+}
+
+footer.general_element {
+    grid-area: ge_footer;
+    background-color: var(--color4);
+}
+
+a {
+    text-decoration: none;
+    cursor: pointer;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+    margin: 0;
+}
+
+.button,
+button {
+    border: 0;
+    cursor: pointer;
+    background-color: var(--color1);
+    border-radius: 5px;
 }
 
 
-body {
-    font-family: Poppins, sans-serif;
+
+
+
+/* Esto es para que vean cuales son los enlaces que no llevan a nada */
+
+a[href=""],
+a[href="#"] {
+    text-decoration: underline !important;
+    color: red !important;
 }
+
+
+.modalMsg * {
+    font-family: BlinkMacSystemFont, "Segoe UI", Fontawesome;
+}
+
+.modalMsg {
+    height: fit-content;
+    width: fit-content;
+    overflow-y: hidden;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    box-shadow: 0px 0px 7px black;
+    border-radius: 10px;
+    display: none;
+}
+
+.modalMsg .modal-dialog {
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+}
+
+.modalMsg.ver_modalMsg .modal-content {
+    display: grid !important;
+    grid-template-areas: "mo_h mo_b mo_f";
+    grid-template-columns: 50px auto 60px;
+    padding-block: 10px;
+    padding-inline: 5px;
+    gap: 5px;
+    background-color: transparent;
+    border: 0;
+    border-radius: 6px;
+    outline: 0;
+    background-clip: padding-box;
+    position: relative;
+    margin: 0;
+    width: 100%;
+}
+
+.modalMsg .modal-header,
+.modalMsg .modal-body,
+.modalMsg .modal-footer {
+    display: flex;
+    padding: 0;
+    margin: 0;
+    justify-content: center;
+    align-items: center;
+    border: 0;
+}
+
+.modalMsg .modal-header {
+    grid-area: mo_h;
+}
+
+.modalMsg .modal-header i {
+    font-size: 30px;
+}
+
+.modalMsg .modal-body {
+    grid-area: mo_b;
+    justify-content: left;
+}
+
+.modalMsg .modal-body p {
+    padding: 0;
+    margin: 0;
+    color: black;
+    /* font-size: 15px; */
+}
+
+.modalMsg .modal-footer {
+    grid-area: mo_f;
+}
+
+.modalMsg .modal-footer button:hover {
+    cursor: pointer;
+}
+
+.modalMsg .modal-footer button {
+    display: flex;
+    border-radius: 20px;
+    padding: 0;
+    font-size: 100%;
+    width: 32.5px;
+    height: 32.5px;
+    justify-items: center;
+    justify-content: center;
+    align-items: center;
+    border: 0;
+}
+
+.modalMsg .modal-footer button i {
+    font-size: 15px;
+}
+
+.modalMsg.ver_modalMsg {
+    display: block !important;
+}
+
+
+
+.modalError .modal-header i {
+    color: #e61f65;
+}
+
+.modalError {
+    background-color: #fcdada;
+    right: auto;
+    top: auto;
+    bottom: 10px;
+    left: 10px;
+}
+
+.modalError .modal-dialog {
+    width: var(--width-msg-error);
+}
+
+.modal_button_cancelar {
+    background-color: #db0000bd;
+    color: white;
+}
+
+.modalError .modal-body p {
+    font-size: 15px;
+    line-height: 1.6em;
+}
+
+
+
+
+
+
+
+
+
+
+
+.clickable-image {
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.clickable-image:hover {
+    transform: scale(1.05);
+}
+
+.overlayImage {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.616);
+    justify-content: center;
+    align-items: center;
+    z-index: 999900;
+}
+
+.enlarged-image {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 8px;
+    box-shadow: 0px 0px 3px white;
+}
+
+.head_title {
+    font-size: 32px;
+    /* filter: brightness(1.9); */
+    /* color: var(--color4); */
+    color: #0E1D63;
+    text-align: center;
+    font-weight: 700;
+    margin-bottom: 10px;
+    /* margin: 30px 0 0px 0; */
+    text-transform: uppercase;
+}
+
+i.d_i {
+    font-size: 100% !important;
+    color: #cecece98 !important;
+}
+
+
+
+
+.btn_insert {
+    background-color: var(--color-insert) !important;
+    color: white;
+}
+
+.btn_search {
+    background-color: var(--color-search);
+    color: white;
+}
+
+.btn_access {
+    background-color: var(--color-access);
+    color: white;
+}
+
+.btn_update {
+    background-color: var(--color-update) !important;
+    color: white;
+}
+
+.btn_active {
+    background-color: var(--color-active) !important;
+    color: white;
+}
+
+.btn_unactive {
+    background-color: var(--color-unactive) !important;
+    color: white;
+}
+
+.btn_delete {
+    background-color: var(--color-delete) !important;
+    color: white;
+}
+
+.btn_consult {
+    background-color: var(--color-consult) !important;
+    color: white;
+}
+
+.btn_cancel {
+    background-color: var(--color-cancel) !important;
+    color: white;
+}
+
+.btn_back {
+    background-color: var(--color-back) !important;
+    color: white;
+}
+
+.btn_acept {
+    background-color: var(--color-acept) !important;
+    color: white;
+}
+
+
+
+
+
+
+.text_insert,
+.text_search,
+.text_update,
+.text_unactive,
+.text_delete,
+.text_consult,
+.text_back,
+.text_acept,
+.text_access,
+.text_active {
+    background-color: transparent;
+}
+
+.text_insert {
+    color: var(--color-insert);
+}
+
+.text_search {
+    color: var(--color-search);
+}
+
+.text_access {
+    color: var(--color-access);
+}
+
+.text_update {
+    color: var(--color-update) !important;
+}
+
+.text_active {
+    color: var(--color-active) !important;
+}
+
+.text_unactive {
+    color: var(--color-unactive) !important;
+}
+
+.text_delete {
+    color: var(--color-delete) !important;
+}
+
+.text_consult {
+    color: var(--color-consult) !important;
+}
+
+.text_cancel {
+    color: var(--color-cancel) !important;
+}
+
+.text_back {
+    color: var(--color-back) !important;
+}
+
+.text_acept {
+    color: var(--color-acept) !important;
+}
+

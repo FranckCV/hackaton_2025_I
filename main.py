@@ -251,7 +251,6 @@ def listar_cruds():
 def inject_globals():
     cruds = listar_cruds()                            # Listado de [key, titulo, icono]
     options_pagination_crud, selected_option_crud = get_options_pagination_crud()
-    print(cruds)
     return dict(
         # Ahora inyectamos la lista de cruds (no un dict)
         CONTROLLERS           = cruds,
@@ -314,7 +313,6 @@ def crud_generico(tabla):
 
             existe_activo = controlador.exists_Activo()
             columnas , filas = controlador.get_table()
-            print(filas)
             primary_key = controlador.get_primary_key()
             table_columns  = list(filas[0].keys()) if filas else []
             CRUD_FORMS = config["crud_forms"]

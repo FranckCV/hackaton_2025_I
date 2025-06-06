@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, flash, jsonify, ses
 import configuraciones
 import controladores.controlador_pregunta as controlador_pregunta
 import controladores.controlador_categoria as controlador_categoria
+import controladores.controlador_historial as controlador_historial
 import modelo_semantico
 import os
 import requests
@@ -168,6 +169,29 @@ CONTROLADORES = {
             "crud_unactive": True ,
         }
     },
+    "historial": {
+    "active": True,
+    "titulo": "historial de interacciones",
+    "nombre_tabla": "historial",
+    "controlador": controlador_historial,
+    "icon_page": "fa-solid fa-clock-rotate-left",
+    "filters": [],
+    "fields_form": [
+        ['id', 'ID', 'ID', 'text', True, False, None],
+        ['mensaje', 'Mensaje', 'Mensaje recibido', 'text', True, True, None],
+        ['estado', 'Estado', 'Estado de interacción', 'text', True, True, None],
+        # ['categoriaid', 'Categoría', 'Categoría asociada', 'select', False, True, [controlador_categoria.get_options]],
+    ],
+    "crud_forms": {
+        "crud_list": True,
+        "crud_search": True,
+        "crud_consult": True,
+        "crud_insert": True,
+        "crud_update": True,
+        "crud_delete": True,
+        "crud_unactive": False,
+    }
+},
 }
 
 

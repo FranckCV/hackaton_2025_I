@@ -112,3 +112,4 @@ def obtener_categorias():
         resultado = cursor.fetchall()
     conexion.close()
     return resultado
+

@@ -12,6 +12,12 @@ def get_info_columns():
 def get_primary_key():
     return show_primary_key(table_name)
 
+def exists_Activo():
+    return False
+
+def delete_row(id):
+    bd.delete_row_table(table_name, id)
+
 def table_fetchall():
     sql = f'''
         SELECT *
@@ -28,36 +34,44 @@ def get_table():
             h.estado,
             c.nombre AS categoria
         FROM historial h
-        LEFT JOIN categoria c ON h.categoriaid = c.id
+        LEFT JOIN categoria c ON c.id = h.categoriaid
         ORDER BY h.fecha DESC
     '''
     columnas = {
-        'id': ['ID', 0.5],
-        'mensaje': ['Mensaje', 4],
+        'id': ['ID', 0.3],
+        'mensaje': ['Mensaje', 3],
         'fecha': ['Fecha', 2],
         'estado': ['Estado', 1],
-        'categoria': ['Categoría', 2]
+        'categoria': ['Categoría', 1.5],
     }
     filas = sql_select_fetchall(sql)
     return columnas, filas
 
-def insert_historial(mensaje, estado=1, categoriaid=None):
+def unactive_row(id):
+    pass
+
+def insert_row(mensaje, estado, categoriaid=None):
     sql = f'''
-        INSERT INTO {table_name} (mensaje, estado, categoriaid)
+        INSERT INTO historial (mensaje, estado, categoriaid)
         VALUES (%s, %s, %s)
     '''
     sql_execute(sql, (mensaje, estado, categoriaid))
 
-def get_ultimos(n=10):
+def update_row(id, mensaje, estado, categoriaid=None):
     sql = f'''
-        SELECT 
-            h.mensaje,
-            h.fecha,
-            h.estado,
-            c.nombre AS categoria
-        FROM historial h
-        LEFT JOIN categoria c ON h.categoriaid = c.id
-        ORDER BY h.fecha DESC
-        LIMIT %s
+        UPDATE historial SET
+        mensaje = %s,
+        estado = %s,
+        categoriaid = %s
+        WHERE id = %s
     '''
-    return sql_select_fetchall(sql, (n,))
+    sql_execute(sql, (mensaje, estado, categoriaid, id))
+
+def get_options():
+    sql = f'''
+        SELECT id, mensaje
+        FROM historial
+        ORDER BY fecha DESC
+    '''
+    filas = sql_select_fetchall(sql)
+    return [(fila['id'], fila["mensaje"]) for fila in filas]

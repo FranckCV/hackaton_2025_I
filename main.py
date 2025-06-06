@@ -169,32 +169,38 @@ CONTROLADORES = {
             "crud_unactive": True ,
         }
     },
+
     "historial": {
     "active": True,
     "titulo": "historial de interacciones",
     "nombre_tabla": "historial",
     "controlador": controlador_historial,
     "icon_page": "fa-solid fa-clock-rotate-left",
-    "filters": [],
+    "filters": [
+        ['activo', f'{TITLE_STATE}', get_options_active()],
+    ],
     "fields_form": [
-        ['id', 'ID', 'ID', 'text', True, False, None],
-        ['mensaje', 'Mensaje', 'Mensaje recibido', 'text', True, True, None],
-        ['estado', 'Estado', 'Estado de interacción', 'text', True, True, None],
-        # ['categoriaid', 'Categoría', 'Categoría asociada', 'select', False, True, [controlador_categoria.get_options]],
+#     ID/NAME     LABEL              PLACEHOLDER         TYPE       REQUIRED   ABLE/DISABLE   DATOS
+        ['id',       'ID',              'ID',               'text',    True,     False,         None],
+        ['mensaje',  'Mensaje',         'Mensaje recibido', 'text',    True,     True,          None],
+        ['activo',   f'{TITLE_STATE}',  'Activo',           'p',       True,     False,         None],
     ],
     "crud_forms": {
-        "crud_list": True,
+        "crud_list": False,
         "crud_search": True,
-        "crud_consult": True,
-        "crud_insert": True,
-        "crud_update": True,
-        "crud_delete": True,
-        "crud_unactive": False,
+        "crud_consult": False,
+        "crud_insert": False,
+        "crud_update": False,
+        "crud_delete": False,
+        "crud_unactive": True,
     }
 },
+
 }
 
+REPORTES = {
 
+}
 
 
 def validar_error_crud():
@@ -348,7 +354,38 @@ def crud_generico(tabla):
                 crud_unactive  = crud_unactive,
             )
 
-
+@app.route("/reporte=<report_name>")
+def reporte(report_name):
+    config = REPORTES.get(report_name)
+    if config:
+        active = config["active"]
+        if active is True:
+            titulo = config["titulo"]
+            icon_page_crud = get_icon_page(config.get("icon_page"))
+            nombre_tabla = config["nombre_tabla"]
+            filters = config["filters"]
+            columnas , filas = config["table"]
+            table_columns  = list(filas[0].keys()) if filas else []
+            
+            return render_template(
+                "CRUD.html" ,
+                icon_page_crud = icon_page_crud ,
+                titulo         = titulo ,
+                filas          = filas ,
+                filters        = filters,
+                columnas       = columnas ,
+                key_columns    = list(columnas.keys()) ,
+                table_columns  = table_columns ,
+                crud_search    = True,
+                tabla = nombre_tabla,
+                # crud_consult   = True,
+                # crud_insert    = True,
+                # crud_update    = True,
+                # crud_delete    = True,
+                crud_unactive  = True,
+                esReporte      = True ,
+            )
+        
 ##################_ PAGINAS EMPLEADO METHOD POST _################## 
 
 @app.route("/insert_row=<tabla>", methods=["POST"])

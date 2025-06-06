@@ -1,0 +1,171 @@
+{% extends "MAESTRA_ADMIN.html" %}
+
+
+{% block titulo %}
+{{titulo}}
+{% endblock %}
+
+
+{% block estilos %}
+
+
+<style>
+    .block_table {
+        height: 80%;
+        margin-top: 20px;
+    }
+
+    .space_graph {
+        width: 75%;
+        justify-self: center;
+    }
+
+    .space_graph>* {
+        margin: 0 auto;
+    } 
+
+    tr td {
+        gap: 5px;
+        justify-content: center;
+        padding-block: 5px;
+    }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+{% endblock %}
+
+
+{% block contenido %}
+<div class="block_crud">
+    <h3 class="crud_title">
+        {% if HABILITAR_ICON_PAGES %}
+        <i class="{{icon_page}}"></i>
+        {% endif %}
+        {{titulo}}
+    </h3>
+</div>
+
+<div class="block_crud block_table">
+    {% if e_graph %}
+    <div class="report_graph">
+        <div class="space_graph" id="space_graph"></div>
+    </div>
+    {% endif %}
+
+    {% if e_table %}
+    {% set table_columns = filas[0].keys() | list if filas else [] %}
+    {% set key_columns = columnas.keys() | list %}
+    <div class="table-container">
+        <table cellspacing="0" class="table_listado">
+            <thead>
+                <tr>
+                    {% for col in key_columns %}
+                    <th {% if primary_key==col %} class="td_primary_key" {% elif col=='activo' %}
+                        style="width: calc( 1 * var(--width-column) );" {% else %}
+                        style="width: calc( {{columnas[col][1]}} * var(--width-column) );" {% endif %}>
+                        <div class="th_content">
+                            <p>
+                                {{ columnas[col][0] }}
+                            </p>
+                        </div>
+                    </th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody id="productTableBody">
+                {% for fila in filas %}
+
+                <tr {% for resultado in filas %} {% if resultado[primary_key]==fila[primary_key] %} {% for col in
+                    table_columns %} data-{{col}}="{{resultado[col]}}" {% endfor %} {% endif %} {% endfor %}>
+                    {% for col_name in key_columns %}
+                    <td class="{% if primary_key == col_name %} td_primary_key {% endif %}" td_name="{{col_name}}">
+                        <div
+                            class="td_content {% if col_name == primary_key %} td_primary_key {% elif col_name == 'activo' %} td_activo {% endif %}">
+                            {% if col_name == 'activo' %}
+                            {% if fila[col_name] == 1 %}
+                            <p class="activo btn_active">{{STATE_1}}</p>
+                            {% else %}
+                            <p class="activo btn_unactive">{{STATE_0}}</p>
+                            {% endif %}
+                            {% else %}
+                            {% if fila[col_name] == None or fila[col_name] == '' %}
+                            <p class="text_none">Sin {{columnas[col_name][0] | lower }}</p>
+                            {% else %}
+                            <p class="p_value">{{ fila[col_name] }}</p>
+                            {% endif %}
+                            {% endif %}
+                        </div>
+                    </td>
+                    {% endfor %}
+
+                </tr>
+{% if crud_unactive %}
+              {% if fila['activo'] == 1 %}
+              <div class="opciones_fila">
+                <button class="clickable-modal btn_active" id="modal_crud_unactive_{{tabla}}_{{fila[primary_key]}}">
+                  <i class="{{ICON_ACTIVE}}"></i>
+                </button>
+              </div>
+              {% else %}
+              <div class="opciones_fila">
+                <button class="clickable-modal btn_unactive" id="modal_crud_unactive_{{tabla}}_{{fila[primary_key]}}">
+                  <i class="{{ICON_UNACTIVE}}"></i>
+                </button>
+              </div>
+              {% endif %}
+              {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+    {% endif %}
+
+</div>
+
+
+
+{% endblock %}
+
+
+
+{% block scripts %}
+
+{% if e_graph %}
+<script>
+    var optionsGraph = {{ graph | tojson }};
+
+    var chartReport = new ApexCharts(document.querySelector("#space_graph"), optionsGraph);
+    chartReport.render();
+
+</script>
+{% endif %}
+
+{% if e_table %}
+
+<script>
+    const divs = document.querySelectorAll('.td_content:not(.td_primary_key)');
+
+    divs.forEach(div => {
+        let elementP = div.querySelector('.p_value');
+        if (elementP) {
+            let content = elementP.innerText.trim();
+
+            if (!isNaN(content) && content.includes('.')) {
+                div.classList.add('td_right');
+            }
+            else if (!isNaN(content)) {
+                div.classList.add('td_right');
+            }
+            else {
+                div.classList.add('td_left');
+            }
+        }
+    });
+</script>
+<script src="/static/js/orderHeadTable.js"></script>
+<script src="/static/js/paginationCrud_4.js"></script>
+
+
+{% endif %}
+
+{% endblock %}

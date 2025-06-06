@@ -47,7 +47,7 @@ def preguntar_a_gpt(contexto, texto_usuario):
         {"role": "user", "content": texto_usuario}
     ]
 
-    respuesta = openai.chat.completions.create(
+    respuesta = openai.ChatCompletion.create(
         model="gpt-4o",  # Puedes usar "gpt-4" o "gpt-3.5-turbo" si no tienes acceso
         messages=messages,
         max_tokens=600,

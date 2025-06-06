@@ -156,8 +156,8 @@ def datos():
     # print(controlador.get_respuesta_pregunta('Idioma inglés'))
     texto = ''
     for msg in data:
-        info = extract_msg_data(msg)
-        texto += f'''<p>{info}</p>'''
+        # info = extract_msg_data(msg)
+        texto += f'''<p>{msg}</p>'''
 
     return f'{texto}'
 

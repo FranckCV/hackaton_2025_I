@@ -5,11 +5,8 @@ import controladores.controlador_categoria as controlador_categoria
 import controladores.controlador_historial as controlador_historial
 import controladores.controlador_palabra_clave as controlador_palabra_clave 
 import controladores.controlador_pregunta as controlador_pregunta 
-<<<<<<< HEAD
 import controladores.controlador_documento as controlador_documento 
-=======
 import controladores.controlador_dashboard as controlador_dashboard
->>>>>>> 4732707e3e14c74d20a51818400d439d5ca100bf
 
 import modelo_semantico
 import os

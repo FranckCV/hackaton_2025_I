@@ -1,6 +1,4 @@
-/* Estilo de tabla moderno en tonalidades rojas */
 
-/* Título de la sección */
 .section-title {
     font-size: 28px;
     font-weight: 700;
@@ -119,7 +117,6 @@
     font-family: 'SF Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
 }
 
-/* Mensaje de sin datos */
 .table tbody td.text-center {
     text-align: center;
     color: #9ca3af;
@@ -128,18 +125,11 @@
     background: #fefefe;
 }
 
-/* Contenedor principal */
 .main-content {
     background: #fafafa;
     min-height: 100vh;
 }
 
-/* .content-section {
-    max-width: 1200px;
-    margin: 0 auto;
-} */
-
-/* Estados y variaciones */
 .table tbody tr:nth-child(even) {
     background-color: #fefefe;
 }

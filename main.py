@@ -188,7 +188,7 @@ CONTROLADORES = {
         "titulo": "categoría de preguntas",
         "nombre_tabla": "categoria",
         "controlador": controlador_categoria,
-        "icon_page": 'fa-solid fa-list',
+        "icon_page": 'fas fa-tags',
         "filters": [
             ['activo', f'{TITLE_STATE}', get_options_active() ],
         ] ,
@@ -240,7 +240,7 @@ CONTROLADORES = {
         "titulo": "Pregunta",
         "nombre_tabla": "pregunta",
         "controlador": controlador_pregunta,
-        "icon_page": 'fa-solid fa-question',
+        "icon_page": 'fas fa-question-circle',
         "filters": [
             ['categoriaid', 'Categoría de pregunta', lambda: controlador_categoria.get_options() ],
         ] ,
@@ -266,7 +266,7 @@ CONTROLADORES = {
         "titulo": "palabra clave",
         "nombre_tabla": "palabra_clave",
         "controlador": controlador_palabra_clave,
-        "icon_page": 'fa-solid fa-key',
+        "icon_page": 'fas fa-key',
         "filters": [
             ['preguntaid', 'Pregunta', lambda: controlador_pregunta.get_options() ],
         ] ,
@@ -345,7 +345,7 @@ def listar_cruds():
 
 @app.context_processor
 def inject_globals():
-    cruds = listar_cruds()                            # Listado de [key, titulo, icono]
+    cruds = listar_cruds()
     options_pagination_crud, selected_option_crud = get_options_pagination_crud()
     return dict(
         # Ahora inyectamos la lista de cruds (no un dict)
@@ -389,6 +389,11 @@ def inject_globals():
         ICON_UNLOCK            = ICON_UNLOCK,
         ICON_PAGE_NOICON       = f'{ICON_PAGE_NOICON} d_i',
     )
+    
+@app.route("/prueba")
+def prueba():
+    return render_template("prueba.html")
+
 
 #################RUTAS#####################
 

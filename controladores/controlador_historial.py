@@ -75,7 +75,10 @@ def get_options():
         ORDER BY fecha DESC
     '''
     filas = sql_select_fetchall(sql)
-    return [(fila['id'], fila['mensaje']) for fila in filas]
+    return [(fila['id'], fila["mensaje"]) for fila in filas]
+
+
+
 
 def get_report_test():
     sql = f'''

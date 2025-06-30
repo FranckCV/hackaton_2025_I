@@ -167,52 +167,58 @@ def obtener_documentos_relacionados(texto):
     return bd.sql_select_fetchall(sql, [like, like])
 
 
-def responder_gpt_con_doc_soporte(texto_usuario, fecha ):
-    # 1. Buscar preguntas relacionadas
+def responder_gpt_con_doc_soporte(texto_usuario, fecha):
+    # 1️⃣ Buscar SOLO preguntas relacionadas
     sql_preg = """
         SELECT p.titulo, p.respuesta
         FROM pregunta p
         LEFT JOIN palabra_clave pk ON pk.preguntaid = p.id
+        WHERE LOWER(p.titulo) LIKE %s
+           OR LOWER(p.respuesta) LIKE %s
+           OR LOWER(pk.palabra) LIKE %s
+        LIMIT 5
     """
-    ejemplos = bd.sql_select_fetchall(sql_preg)
+    like = f"%{texto_usuario.lower()}%"
+    ejemplos = bd.sql_select_fetchall(sql_preg, [like, like, like])
 
+    # 2️⃣ Buscar SOLO documentos relevantes
     sql_docs = """
         SELECT titulo, url, descripcion
         FROM documento
-        WHERE activo = 1
+        WHERE activo = 1 AND (
+            LOWER(titulo) LIKE %s OR
+            LOWER(descripcion) LIKE %s
+        )
+        LIMIT 3
     """
-    docs = bd.sql_select_fetchall(sql_docs)
+    docs = bd.sql_select_fetchall(sql_docs, [like, like])
 
-    # 3. Construir el prompt
-    prompt = f"El usuario ha preguntado: \"{texto_usuario}\"\n\nBase de datos de respuestas:\n"
-    for i, ej in enumerate(ejemplos, 1):
-        prompt += f"{i}. {ej['titulo']} → {ej['respuesta']}\n"
+    # 3️⃣ Construir el prompt de forma ordenada
+    prompt = f"El usuario ha preguntado: \"{texto_usuario}\"\n\n"
+    if ejemplos:
+        prompt += "📌 Respuestas relevantes en base de datos:\n"
+        for i, ej in enumerate(ejemplos, 1):
+            prompt += f"{i}. {ej['titulo']} ➔ {ej['respuesta']}\n"
+    else:
+        prompt += "No se encontraron respuestas directas en la base de datos.\n"
 
     if docs:
-        prompt += "\n📎 Documentos disponibles:\n"
+        prompt += "\n📎 Documentos disponibles relacionados:\n"
         for doc in docs:
-            prompt += f"{doc}\n"
+            prompt += f"- {doc['titulo']}: {doc['descripcion'] or 'sin descripción'}\n"
+        prompt += "\nSi algún documento puede complementar la respuesta, indícalo."
 
-        prompt += (
-            "\nSi alguno de estos documentos puede complementar la respuesta, "
-            "menciónalo y sugiere al usuario que lo revise. No es necesario que siempre sugieras un documento y hables a profundidad de su descripción , solo lo importante que pueda responder la pregunta"
-        )
+    prompt += "\n\nResponde de forma amable, clara y breve utilizando SOLO esta información."
 
-    prompt2 = prompt + "\n\nDe la lista de documentos analizados devuelveme solo los diccionarios presentados que realmente respondan a la pregunta en una lista []. No des explicaciones, solo envia los diccionarios con los mismos elementos en una lista [], sean varios, uno o ninguno"
-    docs_str = gpt.ejecutar_prompt_usat(prompt2)
-    docs_lst = ast.literal_eval(docs_str)
-
-    prompt += "\n\nResponde de forma clara, amable y profesional usando esta información."
+    # 4️⃣ Enviar a GPT
     respuesta = gpt.ejecutar_prompt_usat(prompt)
 
-    # 5. Verificar si la respuesta fue útil
+    # 5️⃣ Verificación de utilidad
     fue_util = gpt.verificar_si_gpt_respondio(texto_usuario, respuesta)
-
     if str(fue_util) == "0":
         bd.insert_data_historial(texto_usuario, fecha)
 
-    return respuesta, docs_lst
-
+    return respuesta, docs
 
 
 

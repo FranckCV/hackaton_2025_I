@@ -8,4 +8,3 @@ def get_user_count():
     '''
     resultado = sql_select_fetchall(sql)
     return resultado[0]['cantidad_usuarios'] if resultado else 0
-

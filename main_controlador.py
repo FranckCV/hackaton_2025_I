@@ -91,6 +91,7 @@ def get_categorias():
         from categoria
         where activo = 1
         order by 2 asc
+        limit 7
     '''
     filas = bd.sql_select_fetchall(sql)
 

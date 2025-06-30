@@ -1,5 +1,5 @@
 import fitz  # PyMuPDF
-import docx
+from docx import Document
 import pandas as pd
 import os
 from werkzeug.utils import secure_filename
@@ -37,7 +37,7 @@ class LectorArchivo:
 
     def leer_docx(self, ruta):
         try:
-            documento = docx.Document(ruta)
+            documento = Document(ruta)
             return "\n".join([p.text for p in documento.paragraphs])
         except Exception as e:
             return f"[ERROR DOCX] {e}"

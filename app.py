@@ -35,11 +35,11 @@ WSP_URL                = configuraciones.WSP_URL
 URL_SITE               = configuraciones.URL_SITE
 PYTHON_URL             = configuraciones.PYTHON_URL
 
-resp = requests.post(
-    f"{PYTHON_URL}set_ngrok_url",
-    json={"url": URL_SITE},
-    timeout=10
-)
+# resp = requests.post(
+#     f"{PYTHON_URL}set_ngrok_url",
+#     json={"url": URL_SITE},
+#     timeout=10
+# )
 
 
 STATE_0                = configuraciones.STATE_0
@@ -102,6 +102,10 @@ def procesar_mensaje():
     tipo = data.get("tipo")
     fecha = data.get("fecha")
     message = data.get("message")
+
+    requests.post(f"{URL_SITE}insert_usuario_chat", json={
+        "numero": sender
+    }, timeout=5)
 
     try:
         payload = None
@@ -185,6 +189,31 @@ def procesar_mensaje():
 
     except Exception as e:
         return jsonify({"respuesta": f"Error procesando: {e}", "documentos": [], "tipo_envio": "texto"})
+
+
+
+@app.route("/insert_usuario_chat", methods=["POST"])
+def insert_usuario_chat():
+    try:
+        data = request.get_json()
+        numero = data.get("numero") 
+
+        if not numero:
+            return jsonify({"error": "Número no proporcionado"}), 400
+
+        from controladores import bd
+        sql_check = "SELECT 1 FROM usuarios_chat WHERE numero = %s"
+        existe = bd.sql_select_fetchone(sql_check, (numero,))
+
+        if not existe:
+            sql_insert = "INSERT INTO usuarios_chat (numero) VALUES (%s)"
+            bd.sql_execute(sql_insert, (numero,))
+        
+        return jsonify({"message": "Usuario registrado"}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 
 @app.route("/get_webhook")

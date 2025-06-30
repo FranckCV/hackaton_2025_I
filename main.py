@@ -2,7 +2,7 @@ import configuraciones
 URL_NGROK = configuraciones.URL_SITE
 VERIFY_TOKEN = configuraciones.VERIFY_TOKEN
 
-from flask import Flask, request 
+from flask import Flask, request ,jsonify
 import requests
 from datetime import datetime
 import pytz

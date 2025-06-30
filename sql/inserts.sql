@@ -11,21 +11,73 @@ INSERT INTO categoria (`id`, `nombre`, `descripcion`, `activo`) VALUES
 (11, 'Facultades', NULL, 1),
 (12, 'Año Académico', 'Información sobre semestres, cursos de verano y duración del año académico.', 1);
 INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES (1, 'Créditos complementarios', 'Debe acreditar mínimamente dos (2) créditos de formación complementaria, los cuales puede desarrollarlo mediante talleres: Deportivos, Artísticos, Tutoría par, Responsabilidad social, etc.', 1);
-INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES (2, 'Justificación de inasistencias', 'El estudiante podrá justificar inasistencias por razones médicas, fallecimiento de familiares, citación judicial o representación institucional. Debe presentar su solicitud en el campus virtual con documentos sustentatorios, dentro de los 2 días hábiles posteriores a la inasistencia.', 2);
-INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES (3, 'Retiro de semestre académico', 'Es voluntario, autorizado por la Dirección de Escuela y no permite retiro parcial. Se solicita por motivos personales, familiares, económicos o de salud. Se debe hacer mediante el campus virtual con documentos sustentatorios.', 3);
-INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES (4, 'Retiro definitivo', 'Se solicita a través del módulo virtual. Si es durante el semestre, implica también retiro del semestre. Puede anularse con trámite dentro de 5 días. Si desea continuar estudios en semestres posteriores, tiene hasta 2 años para solicitar reincorporación.', 3);
-INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES (5, 'Reserva de matrícula', 'Permite diferir la matrícula por un semestre. Se solicita con sustento a través del campus virtual en fechas definidas. No debe exceder 3 años. Para movilidad académica saliente, se realiza automáticamente.', 4);
-INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES (6, 'Reincorporación', 'Solicitada por estudiantes que dejaron de matricularse sin reservar. Se pide a través del campus virtual, está sujeta a vacantes y calendario. No se autoriza si fue separado por razones académicas o disciplinarias.', 4);
-INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES (7, 'Cursos de verano', 'Depende de la programación de la Escuela. Debe ser consultado en una base de datos externa o actualizada mediante app web.', 5);
-INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES (8, 'Prácticas preprofesionales', 'Se deben completar 260 horas a partir del VIII ciclo, sin cursos pendientes de ciclos anteriores. Se solicita carta de presentación por campus virtual.', 6);
-INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES (9, 'Cambio de tema de tesis', 'Se realiza por caso fortuito o fuerza mayor, aprobado por el asesor. Debe presentarse informe y nuevo proyecto. Si se aprueba, se reinicia el proceso según el reglamento de tesis.', 7);
-INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES (10, 'Actualización de datos de tesis', 'Si se requiere mejorar redacción de título, objetivos, etc., se debe hacer el trámite virtual para que lo atienda el Docente de Apoyo a Tesis.', 7);
-INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES (11, 'Obtención del grado de bachiller', 'Requiere condición de egresado, no tener deudas, pago de trámite, haber llevado curso de investigación y cumplir los requisitos administrativos.', 8);
-INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES (12, 'Sustentación de tesis', 'Requiere grado de bachiller, conformidad del asesor, no tener deudas y pago de derecho de sustentación.', 8);
-INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES (13, 'Titulación', 'Requiere grado de bachiller, aprobación de tesis ante jurado, no tener deudas, pago por título y cumplimiento de requisitos administrativos.', 8);
+INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES 
+(
+  2,
+  'Justificación de inasistencias',
+  'El estudiante puede justificar inasistencias presentando una solicitud en el campus virtual, dentro de los 2 días hábiles posteriores a la falta, adjuntando los documentos sustentatorios según el caso:\n\n
+a) Fallecimiento de familiar (hasta 4° grado de consanguinidad o 2° de afinidad, o cónyuge): presentar certificado de defunción y documento que acredite el parentesco.\n
+b) Motivos de salud: certificado médico expedido por profesional o establecimiento de salud, visado por MINSA o EsSalud. En casos de consulta médica, adjuntar comprobante de pago con datos del paciente y médico, ticket de atención, indicaciones y recetas.\n
+c) Citación judicial: copia legalizada notarialmente del documento de citación.\n
+d) Representación institucional: constancia de participación en certamen académico, deportivo, religioso u otra actividad en nombre de la Facultad o Universidad.\n\n
+El Director de Escuela evaluará la solicitud y, si procede, registrará las fechas y asignaturas afectadas. Las inasistencias justificadas no deben superar el 30% del total. No se recuperan clases, prácticas ni laboratorios, pero sí evaluaciones individuales programadas. En la última semana de clases, se evaluará la pertinencia de la justificación.',
+  2
+);
+INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES 
+(
+  3,
+  'Retiro de semestre académico',
+  'El retiro de semestre académico es un proceso voluntario autorizado por la Dirección de Escuela, que no permite retiro parcial de asignaturas. Puede solicitarse por motivos personales, familiares, económicos o de salud, debidamente sustentados. Se debe generar la solicitud mediante el campus virtual (módulo correspondiente), indicando las causas y adjuntando los documentos justificatorios.\n\nLa Dirección de Escuela evaluará los informes académicos y de asistencia del estudiante, y si lo considera necesario, podrá solicitar una entrevista. Tiene un plazo máximo de 5 días hábiles para resolver y registrar en el sistema la última fecha de asistencia.\n\nSi el retiro académico es aprobado, el estudiante puede anularlo dentro de un plazo no mayor a 5 días hábiles, presentando una solicitud virtual a la Dirección Académica, quien evaluará y comunicará la decisión a las áreas correspondientes. No habrá reintegro de pensiones por los días involucrados a este trámite de anulación.\n\nEn caso el estudiante tuviera deuda y el retiro sea aprobado, podrá solicitar la anulación de dicha deuda al Área de Pensiones, quien evaluará la solicitud y procederá con el cierre administrativo del trámite.',
+  3
+);
+
+INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES 
+(
+  4,
+  'Retiro definitivo',
+  'El retiro definitivo se solicita por módulo virtual y es evaluado por la Dirección de Escuela. Si se realiza hasta una semana antes de finalizar el semestre, implica también retiro del semestre; después de ese plazo, solo aplica como retiro administrativo. Puede anularse con trámite virtual dentro de los 5 días siguientes si desea continuar en el semestre. Para retomar estudios en semestres posteriores, puede solicitar anulación hasta en 2 años. La Dirección Académica evalúa la solicitud y comunica la decisión a las áreas correspondientes.',
+  3
+);
+INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES 
+(
+  5,
+  'Reserva de matrícula',
+  'Permite diferir voluntariamente la matrícula por un semestre académico inmediato. Se solicita con sustento a través del campus virtual en fechas del calendario académico, y no debe exceder tres (3) años consecutivos o alternos, debe ser aprobado por el director de escuela. Una vez aprobada, se realiza el pago para habilitación en el campus virtual. En caso de movilidad académica saliente, la reserva se genera automáticamente luego que el coordinador de movilidad haya validado el formato de llegada del estudiante.', 
+  4
+);
+INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES 
+(
+  6,
+  'Reincorporación',
+  'Los estudiantes que dejaron de matricularse matricularse en uno o más semestres académicos y no ha solicitado reserva de matrícula, deben solicitar su reincorporación a través del campus virtual pagando el derecho correspondiente. El trámite va dirigido a dirección de escuela. Su aprobación está sujeta a vacantes y al calendario académico. Al reincorporarse, deben firmar aceptación de plan de estudios, tarifas y normativas vigentes. No procede si el estudiante fue separado por razones académicas o disciplinarias, o si no hay vacantes disponibles.', 
+  4
+);
+INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES (7, 'Cursos de verano', 'Depende de la programación de la Escuela.', 5);
+INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES 
+(
+  8,
+  'Prácticas preprofesionales',
+  'El estudiante debe realizar un mínimo de 260 horas de prácticas, en uno o varios centros, en modalidad presencial o virtual, a partir del VIII ciclo, sin cursos pendientes de ciclos anteriores y con condición de estudiante activo. Para iniciar sus prácticas pre profesionales, deberá realizar su trámite en el campus virtual seleccionando el trámite “CARTA DE PRESENTACIÓN” y motivo “Prácticas pre profesionales”. Debe detallar los siguientes datos: 
+- Nombre completo de la empresa o institución.
+- RUC para verificar su vigencia.
+- Nombres y cargo de la máxima autoridad.
+- Dirección fiscal de la empresa.
+- Jefe inmediato: nombres completos y cargo del supervisor. 
+  Nota: Si es Arquitecto, indicar N.º CAP; si es Ingeniero, N.º CIP, y debe estar habilitado para ejercer la profesión.',
+  6
+);
+INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES 
+(9, 'Cambio de tema de tesis', 'El estudiante podrá solicitar el cambio de tema por caso fortuito o fuerza mayor, con respaldo de su asesor mediante informe (Anexo 05). La solicitud debe presentarse dentro de los 10 días hábiles desde el inicio de clases, dirigida al Director(a) de Escuela, adjuntando el informe y un nuevo proyecto (Anexo 02). Si se aprueba, el estudiante deberá reiniciar el proceso según el reglamento (Art. 6° al 22°). El procedimiento está detallado en el Anexo 06.', 7);
+INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES (10, 'Actualización de datos de tesis', 'Si se requiere mejorar redacción de título, objetivos, línea de investigación, campo OCDE., se debe solicitar directamente un trámite de “ACTUALIZACIÓN DE DATOS DE TESIS” a través de su campus virtual, el cual será atendido por el Docente de Apoyo a Tesis (DAT). El trámite administrativo y académico que se seguirá para el cambio de tema de investigación se detalla en el anexo 07.', 7);
+INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES (11, 'Obtención del grado de bachiller', 'Requiere condición de egresado en el sistema del Campus Virtual USAT, no tener deudas, pago de trámite, haber llevado un curso de trabajo de investigación que se sigue en el último semestre de estudios y cumplir los demás requisitos que establezca en el Reglamento de Grados y Títulos.Estos requisitos pueden variar de acuerdo con la normativa nacional vigente en caso
+Corresponda.', 8);
+INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES (12, 'Sustentación de tesis', 'Requiere grado de bachiller, conformidad del asesor (Informe que declara la tesis apta para sustentar), no tener deudas y pago de derecho de sustentación.', 8);
+INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES (13, 'Titulación', 'Para obtener el título profesional se requiere: contar con el grado de bachiller en Ingeniería de Sistemas y Computación, aprobar la tesis ante jurado, no tener deudas con la Universidad, realizar el pago correspondiente al trámite, cumplir los requisitos administrativos, y otros establecidos en el Reglamento de Grados y Títulos. Estos requisitos pueden variar según normativa nacional vigente.', 8);
 INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES (14, 'Idioma inglés', 'Es requisito de egreso. Se debe acreditar nivel intermedio (B1).', 8);
-INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES (15, 'Programa de actualización de tesis', 'Dirigido a egresados o bachilleres con tesis desactualizadas. Consta de tres fases: proyecto, ejecución e informe. Cada fase tiene su propio trámite y documentación.', 7);
-INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES (16, 'Vigencia del proyecto de tesis aprobado', 'El proyecto tiene vigencia de 3 años desde la aprobación. Puede ampliarse 1 año más como excepción. Luego de ese plazo, pierde validez y se debe presentar uno nuevo.', 7);
+INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES (15, 'Programa de actualización de tesis', 'Los egresados o bachilleres cuyos trabajos de investigación hayan perdido vigencia deberán inscribirse en el programa de actualización de tesis, que consta de tres fases: Proyecto, Ejecución e Informe. Cada fase debe ser tramitada virtualmente a través del campus virtual USAT (campus egresado), abonando la tasa correspondiente. El calendario es establecido por el Vicerrectorado de Investigación e incluye:\n- ETAPA PROYECTO\n- ETAPA EJECUCIÓN\n- ETAPA INFORME', 7);
+INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES (16, 'Vigencia del proyecto de tesis aprobado', 'El proyecto de tesis tiene una vigencia de 3 años desde la aprobación del acto de sustentación. Excepcionalmente, puede ampliarse 1 año más previa solicitud al Director(a) de Escuela. Vencido este plazo, pierde validez y el estudiante deberá iniciar un nuevo proceso, presentando otro tema y pagando las tasas administrativas correspondientes.
+
+', 7);
 INSERT INTO palabra_clave (palabra, PREGUNTAid) VALUES ('créditos', 1);
 INSERT INTO palabra_clave (palabra, PREGUNTAid) VALUES ('complementarios', 1);
 INSERT INTO palabra_clave (palabra, PREGUNTAid) VALUES ('justificación', 2);
@@ -224,4 +276,21 @@ INSERT INTO `pregunta` (`titulo`, `respuesta`, `CATEGORIAid`) VALUES
 ('Convenios con universidades de Colombia',
 '* Universidad Católica de Colombia\n* Pontificia Universidad Javeriana\n* Universidad CES\n* Universidad Mariana\n* Universidad Autónoma de Occidente\n* Universidad de La Sabana\n* Fundación Universitaria Juan D Castellanos\n* Universidad Nacional de Colombia',
 13);
+
+
+INSERT INTO pregunta (titulo, respuesta, CATEGORIAid) VALUES 
+(
+  'Improcedencia del retiro de semestre académico',
+  'El retiro de semestre académico no procede si el estudiante se ha retirado en dos ocasiones consecutivas o en tres ocasiones alternas dentro del mismo programa de estudios.',
+  3
+);
+INSERT INTO pregunta (titulo, respuesta, CATEGORIAid) VALUES 
+(
+  'Omisión de trámite de retiro',
+  'Si un estudiante matriculado deja de asistir a clases sin realizar el trámite de retiro de semestre, acumulará deuda de pensiones por efectos administrativos.',
+  3
+);
+
+INSERT INTO pregunta (titulo, respuesta, CATEGORIAid) VALUES 
+('Director de Escuela', 'Ing. Huilder Mera\r\nCorreo hmera.@usat.edu.pe', 10);
 

@@ -32,6 +32,17 @@ def webhook():
             data = request.get_json()
             message = data["entry"][0]["changes"][0]["value"]["messages"][0]
             sender = message["from"]
+            
+            ############código agregado
+            # EXTRAER NÚMERO
+            sender = message["from"]
+
+            # REGISTRAR USUARIO SI NO EXISTE
+            requests.post(f"{URL_NGROK}insert_usuario_chat", json={
+                "numero": sender
+            }, timeout=5)
+            ######################
+            
             tipo = message["type"]
             fecha = local_hour()
 
@@ -75,3 +86,25 @@ def webhook():
 
         except Exception as e:
             return f"ERROR EN WEBHOOK: {e}", 200
+
+@app.route("/insert_usuario_chat", methods=["POST"])
+def insert_usuario_chat():
+    try:
+        data = request.get_json()
+        numero = data.get("numero")
+
+        if not numero:
+            return jsonify({"error": "Número no proporcionado"}), 400
+
+        from controladores import bd
+        sql_check = "SELECT 1 FROM usuarios_chat WHERE numero = %s"
+        existe = bd.sql_select_fetchone(sql_check, (numero,))
+
+        if not existe:
+            sql_insert = "INSERT INTO usuarios_chat (numero) VALUES (%s)"
+            bd.sql_execute(sql_insert, (numero,))
+        
+        return jsonify({"message": "Usuario registrado"}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

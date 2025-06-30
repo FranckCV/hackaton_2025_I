@@ -45,3 +45,11 @@ ALTER TABLE palabra_clave ADD CONSTRAINT FKpalabra_cl896610 FOREIGN KEY (PREGUNT
 ALTER TABLE estado_usuario ADD CONSTRAINT FKestado_usu784846 FOREIGN KEY (categoriaid) REFERENCES categoria (id);
 ALTER TABLE historial ADD CONSTRAINT FKhistorial675424 FOREIGN KEY (categoriaid) REFERENCES categoria (id);
 ALTER TABLE documento ADD CONSTRAINT FKdocumento246863 FOREIGN KEY (preguntaid) REFERENCES pregunta (id);
+
+CREATE TABLE usuarios_chat (
+  numero            VARCHAR(20) NOT NULL,         
+  nombre            VARCHAR(100),                 
+  fecha_registro    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  estado            TINYINT DEFAULT 1,            
+  PRIMARY KEY (numero)
+);

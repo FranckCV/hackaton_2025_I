@@ -8,7 +8,7 @@ import controladores.controlador_pregunta as controlador_pregunta
 import controladores.controlador_categoria as controlador_categoria
 import controladores.controlador_historial as controlador_historial
 import controladores.controlador_palabra_clave as controlador_palabra_clave
-# import controladores.controlador_pregunta as controlador_pregunta
+import controladores.controlador_pregunta as controlador_pregunta
 import controladores.controlador_documento as controlador_documento
 import controladores.controlador_dashboard as controlador_dashboard
 import controladores.bd as bd
@@ -62,7 +62,7 @@ ACCESS_TOKEN = 'EAAUc4yYrWtsBO5wxdYUFqfwpZBoLMe3qw5cLCvdDExrZBXKY9Rzv8ZByHIVZATb
 PHONE_NUMBER_ID = '601214496418181'
 # RECIPIENT_PHONE_NUMBER = '51948938578'
 RECIPIENT_PHONE_NUMBER = '51966302879'
-url = f"https://graph.facebook.com/v22.0/{PHONE_NUMBER_ID}/messages"
+wsp_url = f"https://graph.facebook.com/v22.0/{PHONE_NUMBER_ID}/messages"
 
 
 def send_wsp_document(recipient_number, file_url, filename="documento.pdf"):
@@ -81,7 +81,7 @@ def send_wsp_document(recipient_number, file_url, filename="documento.pdf"):
         }
     }
 
-    return requests.post(url, headers=headers, json=data)
+    return requests.post(wsp_url, headers=headers, json=data)
 
 
 
@@ -112,7 +112,7 @@ def send_wsp_list_options(recipient_number, text, options, section_title="Opcion
         }
     }
 
-    response = requests.post(url, headers=headers, json=data)
+    response = requests.post(wsp_url, headers=headers, json=data)
     return response
 
 
@@ -136,7 +136,7 @@ def send_wsp_options( recipient_number , text , buttons):
             }
         }
     }
-    response = requests.post(url, headers=headers, json=data)
+    response = requests.post(wsp_url, headers=headers, json=data)
     return response
 
 
@@ -154,7 +154,7 @@ def send_wsp_msg( recipient_number , text ):
             "body": text
         }
     }
-    response = requests.post(url, headers=headers, json=data)
+    response = requests.post(wsp_url, headers=headers, json=data)
     return response
 
 
@@ -878,3 +878,5 @@ def crud_unactive(tabla):
 #     return render_template("dashboard_general.html")
 
 
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=8000, debug=True)

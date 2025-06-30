@@ -1,57 +1,46 @@
 import pymysql
 from pymysql.cursors import DictCursor
+import requests
 
-def obtener_conexion():
-    return pymysql.connect(host='localhost',
-                                port=3306,
-                                # port=3307,
-                                user='root',
-                                password='',
-                                db='bd_chatbot' ,                                
-                                cursorclass=DictCursor
-                                )
+def execute_bd_pythonanywhere(tipo , sql , args=None):
+    res = requests.post("https://franckcv.pythonanywhere.com/api/sql", json={
+        "tipo": tipo,
+        "sql": sql ,
+        "args": args ,
+    })
+    return res
 
 
 def sql_select_fetchall(sql , args = None):
-    conexion = obtener_conexion()
     try:
-        with conexion.cursor() as cursor:
-            cursor.execute(sql , args)
-            resultados = cursor.fetchall()
-        conexion.close()
+        resultados = execute_bd_pythonanywhere('fetchall' , sql , args)
         return resultados
     except Exception as e:
         return e
 
 
 def sql_select_fetchone(sql , args = None):
-    conexion = obtener_conexion()
     try:
-        with conexion.cursor() as cursor:
-            cursor.execute(sql, args)
-            resultados = cursor.fetchone()
-        conexion.close()
+        resultados = execute_bd_pythonanywhere('fetchone' , sql , args)
         return resultados
     except Exception as e:
         return e
 
 
 def sql_execute(sql , args = None):
-    conexion = obtener_conexion()
-    with conexion.cursor() as cursor:
-        cursor.execute( sql , args)
-    conexion.commit()
-    conexion.close()
+    try:
+        resultados = execute_bd_pythonanywhere('execute' , sql , args)
+        # return resultados
+    except Exception as e:
+        return e
 
 
 def sql_execute_lastrowid(sql , args = None):
-    conexion = obtener_conexion()
-    with conexion.cursor() as cursor:
-        cursor.execute( sql , args )
-        last_id = cursor.lastrowid
-    conexion.commit()
-    conexion.close()
-    return last_id
+    try:
+        resultados = execute_bd_pythonanywhere('execute_last_id' , sql , args)
+        return resultados
+    except Exception as e:
+        return e
 
 
 def show_columns(table_name):

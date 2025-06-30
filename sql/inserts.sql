@@ -27,9 +27,10 @@ INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES
 (
   3,
   'Retiro de semestre académico',
-  'El estudiante puede solicitar el retiro académico mediante el módulo virtual, indicando las causas y adjuntando sustento. La solicitud es evaluada por la Dirección de Escuela quien evaluará los informes académicos y de asistencia del estudiante , que puede solicitar una entrevista y resolverá en un plazo máximo de 5 días hábiles, registrando la última fecha de asistencia. Si se aprueba, el estudiante podrá anular el retiro en un plazo no mayor a 5 días hábiles. La Dirección Académica evaluará la solicitud de anulación y, si procede, informará a las áreas correspondientes. No hay reintegro de pensiones por los días involucrados.',
+  'El retiro de semestre académico es un proceso voluntario autorizado por la Dirección de Escuela, que no permite retiro parcial de asignaturas. Puede solicitarse por motivos personales, familiares, económicos o de salud, debidamente sustentados. Se debe generar la solicitud mediante el campus virtual (módulo correspondiente), indicando las causas y adjuntando los documentos justificatorios.\n\nLa Dirección de Escuela evaluará los informes académicos y de asistencia del estudiante, y si lo considera necesario, podrá solicitar una entrevista. Tiene un plazo máximo de 5 días hábiles para resolver y registrar en el sistema la última fecha de asistencia.\n\nSi el retiro académico es aprobado, el estudiante puede anularlo dentro de un plazo no mayor a 5 días hábiles, presentando una solicitud virtual a la Dirección Académica, quien evaluará y comunicará la decisión a las áreas correspondientes. No habrá reintegro de pensiones por los días involucrados a este trámite de anulación.\n\nEn caso el estudiante tuviera deuda y el retiro sea aprobado, podrá solicitar la anulación de dicha deuda al Área de Pensiones, quien evaluará la solicitud y procederá con el cierre administrativo del trámite.',
   3
 );
+
 INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES 
 (
   4,
@@ -291,8 +292,5 @@ INSERT INTO pregunta (titulo, respuesta, CATEGORIAid) VALUES
 );
 
 INSERT INTO pregunta (titulo, respuesta, CATEGORIAid) VALUES 
-(
-  'Retiro de semestre académico administrativo',
-  'Es un proceso voluntario autorizado por la Dirección de Escuela, que solo permite el retiro total del semestre (no parcial), hasta una semana antes de su finalización. Se puede solicitar por motivos personales, familiares, económicos o de salud debidamente sustentados. El trámite consta de dos pasos:\n\n• Retiro académico: se solicita por módulo virtual con sustento. La Dirección de Escuela evalúa la solicitud y puede requerir entrevista. Tiene un plazo de 5 días hábiles para resolver. Si el retiro es aprobado, puede anularse dentro de 5 días hábiles mediante solicitud a Dirección Académica.\n\n• Anulación de deuda: si se aprueba el retiro académico y si tuviera deuda, puede solicitar su anulación al Área de Pensiones, el Área de Pensiones evaluará la anulación de la deuda y cerrará el trámite.',
-  3
-);
+('Director de Escuela', 'Ing. Huilder Mera\r\nCorreo hmera.@usat.edu.pe', 10);
+

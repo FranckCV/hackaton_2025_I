@@ -1,11 +1,15 @@
-INSERT INTO categoria (id, nombre, descripcion, activo) VALUES (1, 'Créditos', NULL, 1);
-INSERT INTO categoria (id, nombre, descripcion, activo) VALUES (2, 'Inasistencias', NULL, 1);
-INSERT INTO categoria (id, nombre, descripcion, activo) VALUES (3, 'Retiro', NULL, 1);
-INSERT INTO categoria (id, nombre, descripcion, activo) VALUES (4, 'Matrícula', NULL, 1);
-INSERT INTO categoria (id, nombre, descripcion, activo) VALUES (5, 'Cursos', NULL, 1);
-INSERT INTO categoria (id, nombre, descripcion, activo) VALUES (6, 'Prácticas', NULL, 1);
-INSERT INTO categoria (id, nombre, descripcion, activo) VALUES (7, 'Tesis', NULL, 1);
-INSERT INTO categoria (id, nombre, descripcion, activo) VALUES (8, 'Grados y Títulos', NULL, 1);
+INSERT INTO categoria (`id`, `nombre`, `descripcion`, `activo`) VALUES
+(1, 'Créditos', NULL, 1),
+(2, 'Inasistencias', NULL, 1),
+(3, 'Retiro', NULL, 1),
+(4, 'Matrícula', NULL, 1),
+(5, 'Cursos', NULL, 1),
+(6, 'Prácticas', NULL, 1),
+(7, 'Tesis', NULL, 1),
+(8, 'Grados y Títulos', NULL, 1),
+(10, 'Autoridades', 'Autoridades de la Escuela de Ingenieria en Sistema y Computacion de USAT', 1),
+(11, 'Facultades', NULL, 1),
+(12, 'Año Académico', 'Información sobre semestres, cursos de verano y duración del año académico.', 1);
 INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES (1, 'Créditos complementarios', 'Debe acreditar mínimamente dos (2) créditos de formación complementaria, los cuales puede desarrollarlo mediante talleres: Deportivos, Artísticos, Tutoría par, Responsabilidad social, etc.', 1);
 INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES (2, 'Justificación de inasistencias', 'El estudiante podrá justificar inasistencias por razones médicas, fallecimiento de familiares, citación judicial o representación institucional. Debe presentar su solicitud en el campus virtual con documentos sustentatorios, dentro de los 2 días hábiles posteriores a la inasistencia.', 2);
 INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES (3, 'Retiro de semestre académico', 'Es voluntario, autorizado por la Dirección de Escuela y no permite retiro parcial. Se solicita por motivos personales, familiares, económicos o de salud. Se debe hacer mediante el campus virtual con documentos sustentatorios.', 3);
@@ -72,11 +76,6 @@ INSERT INTO historial (mensaje, fecha) VALUES
 ('Tengo problemas para ingresar al aula virtual.', '2025-06-05 17:50:00'),
 ('¿Qué hacer si no me aparece una asignatura en el sistema?', '2025-06-06 08:20:00');
 
-------------------------NUEVAS CATEGORÍAS Y PREGUNTAS------------------------
-
-
-INSERT INTO categoria (nombre, descripcion, estado) VALUES
-('Año Académico', 'Información sobre semestres, cursos de verano y duración del año académico.', 1);
 
 INSERT INTO `categoria` (`nombre`, `descripcion`, `activo`)
 VALUES ('Convenios internacionales', 'Convenios con universidades extranjeras', 1);
@@ -170,7 +169,6 @@ INSERT INTO pregunta (titulo, respuesta, CATEGORIAid) VALUES
 );
 
 
---------------- más inserts -----------------
 INSERT INTO `pregunta` (`titulo`, `respuesta`, `CATEGORIAid`)
 VALUES (
   'cursos complementarios',
@@ -181,48 +179,49 @@ VALUES (
 INSERT INTO `pregunta` (`titulo`, `respuesta`, `CATEGORIAid`) VALUES
 ('Convenios con universidades de España',
 '* Universidad de Cádiz\n* Universidad de Navarra\n* Universidad Católica de Valencia San Vicente Mártir\n* Universidad de Zaragoza\n* Universidad Rey Juan Carlos\n* Universidad del País Vasco\n* Universidad Católica de Ávila (UCAV)\n* Universidad de Granada\n* Universidad Cardenal Herrera (CEU)\n* Universidad de Jaén\n* Universidad de Málaga\n* Universidad de Santiago de Compostela (USC)\n* Universitat Internacional de Catalunya (UIC)',
-7),
+13),
 
 ('Convenios con universidades de Francia',
 '* Université de Bordeaux\n* Université Catholique de l’Ouest (UCO)',
-7),
+13),
 
 ('Convenios con universidades de Italia',
 '* Sapienza Università di Roma\n* Università degli Studi di Bari Aldo Moro\n* Università degli Studi di Trieste',
-7),
+13),
 
 ('Convenios con universidades de USA',
 '* Washington State University',
-7),
+13),
 
 ('Convenios con universidades de Canadá',
 '* University of Regina',
-7),
+13),
 
 ('Convenios con universidades de India',
 '* Lovely Professional University',
-7),
+13),
 
 ('Convenios con universidades de México',
 '* Red de Universidades Anáhuac\n* Universidad Autónoma de Nuevo León\n* Universidad Vasco de Quiroga (UVAQ)\n* Universidad Tecnológica de San Juan del Río\n* Universidad Nacional Autónoma de México (UNAM)\n* Universidad de Monterrey',
-7),
+13),
 
 ('Convenios con universidades de Argentina',
 '* Pontificia Universidad Católica Argentina (UCA)\n* Universidad Católica de Cuyo\n* Universidad Católica de Salta (UCASAL)\n* Universidad Nacional de Tucumán',
-7),
+13),
 
 ('Convenios con universidades de Brasil',
 '* PUC Goiás\n* Universidade Federal do Rio de Janeiro (UFRJ)\n* La Salle\n* PUC Campinas\n* Universidad de São Paulo (USP)',
-7),
+13),
 
 ('Convenios con universidades de Chile',
 '* Universidad de los Andes\n* Universidad Católica de Temuco\n* Pontificia Universidad Católica de Valparaíso',
-7),
+13),
 
 ('Convenios con universidades de Ecuador',
 '* Universidad de Cuenca',
-7),
+13),
 
 ('Convenios con universidades de Colombia',
 '* Universidad Católica de Colombia\n* Pontificia Universidad Javeriana\n* Universidad CES\n* Universidad Mariana\n* Universidad Autónoma de Occidente\n* Universidad de La Sabana\n* Fundación Universitaria Juan D Castellanos\n* Universidad Nacional de Colombia',
-7);
+13);
+

@@ -11,6 +11,14 @@ def obtener_conexion():
                                 cursorclass=DictCursor
                                 )
 
+# def obtener_conexion():
+#     return pymysql.connect(host='FranckCv.mysql.pythonanywhere-services.com',
+#                                 user='FranckCv',
+#                                 password='mysql2025',
+#                                 db='FranckCv$bd_chatbot',
+#                                 cursorclass=DictCursor
+#                                 )
+
 def sql_select_fetchall(sql , args = None):
     conexion = obtener_conexion()
     try:
@@ -127,4 +135,20 @@ def include_list_search(where = None, list_columns = [] , value_search = None):
             else:
                 strSQL += f''' or {include_data_search(False,column,value_search)}'''
     return strSQL
+
+
+
+
+def insert_data_historial( mensaje, fecha):
+    sql = f'''
+        INSERT INTO
+            historial
+            ( mensaje , fecha  )
+        VALUES
+            ( %s , %s  )
+    '''
+
+    sql_execute(sql,( mensaje , fecha ))
+
+
 

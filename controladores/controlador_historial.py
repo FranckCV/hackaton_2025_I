@@ -1,3 +1,4 @@
+
 from controladores.bd import obtener_conexion, delete_row_table, sql_select_fetchall, sql_select_fetchone, sql_execute, sql_execute_lastrowid, show_columns, show_primary_key, exists_column_Activo, unactive_row_table
 
 #####_ CONFIGURACIÓN PRINCIPAL _#####
@@ -109,3 +110,10 @@ def get_data():
     '''
     filas = sql_select_fetchall(sql)
     return filas
+
+def get_question_count():
+    sql = '''
+        SELECT COUNT(*) AS cantidad_historial FROM historial
+    '''
+    resultado = sql_select_fetchall(sql)
+    return resultado[0]['cantidad_historial'] if resultado else 0

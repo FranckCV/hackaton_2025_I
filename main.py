@@ -1,19 +1,22 @@
-from flask import Flask, render_template, request, redirect, flash, jsonify, session, make_response,  redirect, url_for
+from flask import Flask, render_template, request, redirect,  jsonify,  make_response,   url_for, json
+import main_controlador
+from werkzeug.utils import secure_filename
+# import ast
 import configuraciones
+import controladores.controlador_usuario as controlador_usuario
 import controladores.controlador_pregunta as controlador_pregunta
 import controladores.controlador_categoria as controlador_categoria
 import controladores.controlador_historial as controlador_historial
-import controladores.controlador_palabra_clave as controlador_palabra_clave 
-import controladores.controlador_pregunta as controlador_pregunta 
-import controladores.controlador_documento as controlador_documento 
+import controladores.controlador_palabra_clave as controlador_palabra_clave
+# import controladores.controlador_pregunta as controlador_pregunta
+import controladores.controlador_documento as controlador_documento
 import controladores.controlador_dashboard as controlador_dashboard
+import controladores.bd as bd
 
-import _ARCHIVADO.modelo_semantico as modelo_semantico
+# import _ARCHIVADO.modelo_semantico as modelo_semantico
 import os
 import requests
-from datetime import datetime, date
-import hashlib
-import base64
+# from datetime import datetime, date
 from functools import wraps
 import inspect
 
@@ -28,7 +31,7 @@ HABILITAR_ICON_PAGES = configuraciones.HABILITAR_ICON_PAGES
 ACT_STATE_0          = configuraciones.ACT_STATE_0
 ACT_STATE_1          = configuraciones.ACT_STATE_1
 NOMBRE_CRUD_PAGE     = configuraciones.NOMBRE_CRUD_PAGE
-NOMBRE_ADMINPAGES_PAGE = configuraciones.NOMBRE_ADMINPAGES_PAGE 
+NOMBRE_ADMINPAGES_PAGE = configuraciones.NOMBRE_ADMINPAGES_PAGE
 NOMBRE_OPTIONS_COL   = configuraciones.NOMBRE_OPTIONS_COL
 NOMBRE_BTN_INSERT    = configuraciones.NOMBRE_BTN_INSERT
 NOMBRE_BTN_UPDATE    = configuraciones.NOMBRE_BTN_UPDATE
@@ -37,11 +40,11 @@ NOMBRE_BTN_UNACTIVE  = configuraciones.NOMBRE_BTN_UNACTIVE
 NOMBRE_BTN_LIST      = configuraciones.NOMBRE_BTN_LIST
 NOMBRE_BTN_CONSULT   = configuraciones.NOMBRE_BTN_CONSULT
 NOMBRE_BTN_SEARCH    = configuraciones.NOMBRE_BTN_SEARCH
-ICON_PAGE_NOICON     = configuraciones.ICON_PAGE_NOICON 
-ICON_PAGE_CRUD       = configuraciones.ICON_PAGE_CRUD 
-ICON_PAGE_REPORT     = configuraciones.ICON_PAGE_REPORT 
-ICON_PAGE_DASHBOARD  = configuraciones.ICON_PAGE_DASHBOARD 
-ICON_PAGE_PANEL      = configuraciones.ICON_PAGE_PANEL 
+ICON_PAGE_NOICON     = configuraciones.ICON_PAGE_NOICON
+ICON_PAGE_CRUD       = configuraciones.ICON_PAGE_CRUD
+ICON_PAGE_REPORT     = configuraciones.ICON_PAGE_REPORT
+ICON_PAGE_DASHBOARD  = configuraciones.ICON_PAGE_DASHBOARD
+ICON_PAGE_PANEL      = configuraciones.ICON_PAGE_PANEL
 ICON_LIST            = configuraciones.ICON_LIST
 ICON_CONSULT         = configuraciones.ICON_CONSULT
 ICON_SEARCH          = configuraciones.ICON_SEARCH
@@ -53,11 +56,240 @@ ICON_UNACTIVE        = configuraciones.ICON_UNACTIVE
 ICON_UNLOCK          = configuraciones.ICON_UNLOCK
 
 
+
+VERIFY_TOKEN = "midetoken123"
+ACCESS_TOKEN = 'EAAUc4yYrWtsBO5wxdYUFqfwpZBoLMe3qw5cLCvdDExrZBXKY9Rzv8ZByHIVZATbePjY3NLsxbnzKCPoWw7RiZCBdgZBxucrSr0mA3Rr7ZBg3GINV0zGeQCMcAhJBwMmbWhNoUc2mOoB9iGabCiICeV3NFYju8rrAKlnYaOGQjMchBonoDlXjTZB9xheel1I6'
+PHONE_NUMBER_ID = '601214496418181'
+# RECIPIENT_PHONE_NUMBER = '51948938578'
+RECIPIENT_PHONE_NUMBER = '51966302879'
+url = f"https://graph.facebook.com/v22.0/{PHONE_NUMBER_ID}/messages"
+
+
+def send_wsp_document(recipient_number, file_url, filename="documento.pdf"):
+    headers = {
+        "Authorization": f"Bearer {ACCESS_TOKEN}",
+        "Content-Type": "application/json"
+    }
+
+    data = {
+        "messaging_product": "whatsapp",
+        "to": recipient_number,
+        "type": "document",
+        "document": {
+            "link": file_url,
+            "filename": filename
+        }
+    }
+
+    return requests.post(url, headers=headers, json=data)
+
+
+
+def send_wsp_list_options(recipient_number, text, options, section_title="Opciones"):
+    headers = {
+        "Authorization": f"Bearer {ACCESS_TOKEN}",
+        "Content-Type": "application/json"
+    }
+
+    data = {
+        "messaging_product": "whatsapp",
+        "to": recipient_number,
+        "type": "interactive",
+        "interactive": {
+            "type": "list",
+            "body": {
+                "text": text
+            },
+            "action": {
+                "button": "Ver opciones",
+                "sections": [
+                    {
+                        "title": section_title,
+                        "rows": options
+                    }
+                ]
+            }
+        }
+    }
+
+    response = requests.post(url, headers=headers, json=data)
+    return response
+
+
+def send_wsp_options( recipient_number , text , buttons):
+    headers = {
+        "Authorization": f"Bearer {ACCESS_TOKEN}",
+        "Content-Type": "application/json"
+    }
+
+    data = {
+        "messaging_product": "whatsapp",
+        "to": recipient_number,
+        "type": "interactive",
+        "interactive": {
+            "type": "button",
+            "body": {
+                "text": text
+            },
+            "action": {
+                "buttons": buttons
+            }
+        }
+    }
+    response = requests.post(url, headers=headers, json=data)
+    return response
+
+
+def send_wsp_msg( recipient_number , text ):
+    headers = {
+        "Authorization": f"Bearer {ACCESS_TOKEN}",
+        "Content-Type": "application/json"
+    }
+
+    data = {
+        "messaging_product": "whatsapp",
+        "to": recipient_number,
+        "type": "text",
+        "text": {
+            "body": text
+        }
+    }
+    response = requests.post(url, headers=headers, json=data)
+    return response
+
+
+def force_json(data):
+    return json.loads(data)
+
+
+def truncar_texto(texto, max_len=24):
+    return texto if len(texto) <= max_len else texto[:max_len - 3].strip() + "..."
+
+
+def extract_message_entry(data):
+    return force_json(data)["entry"][0]["changes"][0]["value"]["messages"][0]
+
+
+
+@app.route("/webhook", methods=["GET", "POST"])
+def webhook():
+    if request.method == "GET":
+        mode = request.args.get("hub.mode")
+        token = request.args.get("hub.verify_token")
+        challenge = request.args.get("hub.challenge")
+        if mode == "subscribe" and token == VERIFY_TOKEN:
+            return challenge, 200
+        else:
+            return "Token inválido", 403
+
+    elif request.method == "POST":
+
+        data = request.get_json()
+
+        try:
+            message = data["entry"][0]["changes"][0]["value"]["messages"][0]
+            sender = message["from"]
+            tipo = message["type"]
+            fecha = main_controlador.local_hour()
+
+            main_controlador.insert_data_webhook(data, fecha)
+
+            payload = None
+            response = None
+            rpta = None
+
+            # Obtener payload si viene de botón o lista interactiva
+            if tipo == "button":
+                payload = message["button"]["payload"]
+            elif tipo == "interactive" and message.get("interactive", {}).get("type") == "list_reply":
+                payload = message["interactive"]["list_reply"]["id"]
+
+            # Procesar interacción con botones o listas
+            if payload:
+                if payload == "OTROS_CAT":
+                    main_controlador.set_estado(sender, "modo_abierto")
+                    response = send_wsp_msg(sender, "Puedes escribir tu pregunta libremente.")
+
+                elif payload.startswith("CAT_"):
+                    categoria_id = int(payload.split("_")[1])
+                    main_controlador.set_estado(sender, "preguntas", categoria_id)
+                    preguntas = main_controlador.get_preguntas_por_categoria(categoria_id)
+                    # rows = [{"id": f"PRE_{p['id']}", "title": truncar_texto(p["titulo"]) } for p in preguntas]
+                    rows = [{"id": f"PRE_{p['id']}", "title": truncar_texto(p["titulo"]) , "description": p["titulo"] } for p in preguntas]
+                    rows.append({"id": "OTROS_PREG", "title": "Otros"})
+                    # rpta = [ preguntas , rows ]
+                    response = send_wsp_list_options(sender, "Selecciona una pregunta:", rows, "Preguntas disponibles")
+
+                elif payload.startswith("PRE_"):
+                    pregunta_id = int(payload.split("_")[1])
+                    respuesta = main_controlador.responder_gpt_desde_pregunta(pregunta_id)
+                    response = send_wsp_msg(sender, respuesta)
+                    main_controlador.set_estado(sender, "modo_abierto")
+
+                elif payload == "OTROS_PREG":
+                    main_controlador.set_estado(sender, "modo_abierto")
+                    response = send_wsp_msg(sender, "Escribe tu pregunta libremente.")
+
+            # Procesar mensajes de texto normales
+            elif tipo == "text":
+                texto = message["text"]["body"].strip()
+
+                if texto.lower() == "salir":
+                    main_controlador.limpiar_estado(sender)
+                    response = send_wsp_msg(sender, "¡Gracias por usar el chatbot! Hasta pronto ✌")
+                else:
+                    estado = main_controlador.get_estado(sender)
+
+                    if estado == "inicio" or estado is None:
+                        main_controlador.set_estado(sender, "categorias")
+                        categorias = main_controlador.get_categorias()
+                        rows = [{"id": f"CAT_{c['id']}", "title": c["nombre"]} for c in categorias]
+                        rows.append({"id": "OTROS_CAT", "title": "Otros"})
+                        response = send_wsp_list_options(sender, "¡Hola! ¿Sobre qué tema deseas información?", rows, "Categorías disponibles")
+
+                    elif estado == "modo_abierto":
+                        respuesta, docs = main_controlador.responder_gpt_con_doc_soporte(texto, fecha )
+                        response = send_wsp_msg(sender, respuesta)
+                        if docs :
+                            response = send_wsp_msg(sender, "📎 Aquí tienes documentos que podrían ayudarte:")
+                            for doc in docs:
+                                response = send_wsp_document(sender, doc["url"], doc["titulo"])
+
+                        main_controlador.set_estado(sender, "modo_abierto")
+
+                    elif estado == "preguntas":
+                        categoria_id = main_controlador.get_categoria_actual(sender)
+                        respuesta = main_controlador.buscar_pregunta_en_categoria(texto, categoria_id)
+                        response = send_wsp_msg(sender, respuesta)
+                        main_controlador.set_estado(sender, "modo_abierto")
+
+            main_controlador.limpiar_estados_expirados()
+            return f"OK , {message , rpta , response.text}", 200
+
+        except Exception as e:
+            return f"ERROR EN WEBHOOK: {e}", 200
+
+
+
+@app.route("/get_webhook")
+def get_webhook():
+    data = bd.sql_select_fetchall('select * from webhook order by fecha desc')
+    texto = ''
+    for msg in data:
+        if msg['dato'] :
+            m = force_json(msg['dato'])["entry"][0]["changes"][0]["value"]["messages"][0]
+            texto += f'''<p>{m}</p>'''
+
+    return f'{texto}'
+
+
+
 @app.route("/")
 def index():
     historial = controlador_historial.get_data()
-
-    return render_template("index.html",historial=historial)  # Si tienes un index.html con interfaz
+    cantidad_usuarios = controlador_usuario.get_user_count()
+    cantidad_historial = controlador_historial.get_question_count()
+    return render_template("index.html",historial=historial, cantidad_usuarios = cantidad_usuarios, cantidad_historial = cantidad_historial)  # Si tienes un index.html con interfaz
 
 @app.route("/categorias")
 def categorias():
@@ -84,10 +316,10 @@ def index_2():
 def respuesta_directa():
     data = request.get_json()
     titulo = data.get("titulo", "")
-    
+
     from controladores.controlador_pregunta import obtener_respuesta_por_titulo
     respuesta = obtener_respuesta_por_titulo(titulo)
-    
+
     return jsonify({"respuesta": respuesta or "No encontré esa pregunta."})
 
 
@@ -126,21 +358,6 @@ def panel_administrativo():
     return render_template("dashboard.html", modulos=modulos)
 
 
-@app.route("/preguntar_con_pln", methods=["POST"])
-def preguntar_con_pln():
-    data = request.get_json()
-    pregunta = data.get("pregunta", "")
-    respuesta = controlador_pregunta.buscar_respuesta_por_palabra(pregunta)
-    if not respuesta:
-        respuesta = modelo_semantico.buscar_pregunta_similar(pregunta)
-    if not respuesta:
-        respuesta = "No encontré una respuesta. ¿Podrías reformular la pregunta?"
-
-    return jsonify({"respuesta": respuesta})
-
-
-############################################################################################################################
-#Opciones para activar o desacticar
 def get_options_active():
     lista = [
         [ 0 , STATE_0 ],
@@ -148,7 +365,7 @@ def get_options_active():
     ]
     return lista
 
-#Opciones de paginación 
+#Opciones de paginación
 def get_options_pagination_crud():
     lista = [ 5 , 10 , 15 , 20 , 25  ]
     selected_option_crud = 20
@@ -157,9 +374,9 @@ def get_options_pagination_crud():
 #Obtiene el ícono, si no hay, retorna uno por defecto
 def get_icon_page(icon):
     if not icon or icon == '':
-        return ICON_PAGE_CRUD 
+        return ICON_PAGE_CRUD
     else:
-        return icon 
+        return icon
 
 
 # Convertir lista en tabla de 2 columnas
@@ -199,8 +416,8 @@ CONTROLADORES = {
 #            ID/NAME       LABEL              PLACEHOLDER    TYPE        REQUIRED   ABLE/DISABLE   DATOS
             ['id',          'ID',              'ID',          'text',     True ,     False ,        None ],
             ['nombre',      'Nombre',          'Nombre',      'text',     True ,     True  ,        None ],
-            ['descripcion', 'Descripción',     'descripcion', 'textarea', False,     True  ,        None ],
             ['activo',      f'{TITLE_STATE}',  'Activo',      'p',        True ,     False ,        None ],
+            ['descripcion', 'Descripción',     'descripcion', 'textarea', False,     True  ,        None ],
         ],
         "crud_forms": {
             "crud_list": True ,
@@ -213,31 +430,7 @@ CONTROLADORES = {
         }
     },
 
-#     "historial": {
-#     "active": True,
-#     "titulo": "historial de interacciones",
-#     "nombre_tabla": "historial",
-#     "controlador": controlador_historial,
-#     "icon_page": "fa-solid fa-clock-rotate-left",
-#     "filters": [
-#         ['activo', f'{TITLE_STATE}', get_options_active()],
-#     ],
-#     "fields_form": [
-# #     ID/NAME     LABEL              PLACEHOLDER         TYPE       REQUIRED   ABLE/DISABLE   DATOS
-#         ['id',       'ID',              'ID',               'text',    True,     False,         None],
-#         ['mensaje',  'Mensaje',         'Mensaje recibido', 'text',    True,     True,          None],
-#         ['activo',   f'{TITLE_STATE}',  'Activo',           'p',       True,     False,         None],
-#     ],
-#     "crud_forms": {
-#         "crud_list": False,
-#         "crud_search": True,
-#         "crud_consult": False,
-#         "crud_insert": False,
-#         "crud_update": False,
-#         "crud_delete": False,
-#         "crud_unactive": True,
-#     }
-# },
+
     "pregunta": {
         "active" : True ,
         "titulo": "Pregunta",
@@ -251,8 +444,8 @@ CONTROLADORES = {
 #            ID/NAME          LABEL               PLACEHOLDER      TYPE         REQUIRED   ABLE/DISABLE   DATOS
             ['id',            'ID',               'ID',            'text',      False ,    False,         True ],
             ['titulo',      'Título',          'Título',      'text',     True ,     True  ,        None ],
-            ['respuesta', 'Respuesta',     'Respuesta', 'textarea', False,     True  ,        None ],
             ['categoriaid',  'Nombre de motivo de reclamo', 'Elegir motivo de reclamo', 'select', True ,True, [lambda: controlador_categoria.get_options() , 'nom_cat' ] ],
+            ['respuesta', 'Respuesta',     'Respuesta', 'textarea', False,     True  ,        None ],
         ],
         "crud_forms": {
             "crud_list": True ,
@@ -304,9 +497,9 @@ CONTROLADORES = {
 #            ID/NAME          LABEL               PLACEHOLDER      TYPE         REQUIRED   ABLE/DISABLE   DATOS
             ['id',            'ID',               'ID',            'text',      False ,    False,         True ],
             ['titulo',      'Título',          'Título',      'text',     True ,     True  ,        None ],
-            ['descripcion', 'Descripción',     'Descripción', 'textarea', False,     True  ,        None ],
-             ['url', 'Url',     'Url', 'textarea', False,     True  ,        None ],
+            ['url',          'Url',             'Url', 'file', False,     True  ,        None ],
             ['preguntaid',  'Título de pregunta', 'Elegir pregunta', 'select', True ,True, [lambda: controlador_pregunta.get_options() , 'titulo_pre' ] ],
+            ['descripcion', 'Descripción',     'Descripción', 'textarea', False,     True  ,        None ],
             #  ['activo',      f'{TITLE_STATE}',  'Activo',      'p',        True ,     False ,        None ],
         ],
         "crud_forms": {
@@ -333,8 +526,8 @@ def validar_error_crud():
             try:
                 return f(*args, **kwargs)
             except Exception as e:
-                tabla = kwargs.get('tabla') or args[0] 
-                return rdrct_error(redirect_crud(tabla) , e) 
+                tabla = kwargs.get('tabla') or args[0]
+                return rdrct_error(redirect_crud(tabla) , e)
         return wrapper
     return decorator
 
@@ -355,12 +548,14 @@ def rdrct_error(resp_redirect , e):
     for clave in ERRORES:
         if clave in error_message:
             msg = ERRORES[clave]
-            break 
+            break
     else:
         msg =  'ERROR DESCONOCIDO ENCONTRADO: '+error_message
 
     resp.set_cookie('error', msg , max_age=30)
-    return resp 
+    return resp
+
+
 ###############################OBTENER DATOS########################
 def listar_cruds():
     pages = []
@@ -421,7 +616,7 @@ def inject_globals():
         ICON_UNLOCK            = ICON_UNLOCK,
         ICON_PAGE_NOICON       = f'{ICON_PAGE_NOICON} d_i',
     )
-    
+
 @app.route("/prueba")
 def prueba():
     return render_template("prueba.html")
@@ -493,7 +688,7 @@ def reporte(report_name):
             filters = config["filters"]
             columnas , filas = config["table"]
             table_columns  = list(filas[0].keys()) if filas else []
-            
+
             return render_template(
                 "CRUD.html" ,
                 icon_page_crud = icon_page_crud ,
@@ -512,8 +707,32 @@ def reporte(report_name):
                 crud_unactive  = True,
                 esReporte      = True ,
             )
-        
-##################_ PAGINAS EMPLEADO METHOD POST _################## 
+
+##################_ PAGINAS EMPLEADO METHOD POST _##################
+
+
+UPLOAD_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), "static/docs"))
+ALLOWED_EXTENSIONS = {'pdf', 'txt'}
+
+
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def guardar_archivo(archivo):
+    if archivo and allowed_file(archivo.filename):
+        filename = secure_filename(archivo.filename)
+        filepath = os.path.join(UPLOAD_FOLDER, filename)
+        archivo.save(filepath)
+        url = f"https://franckcv.pythonanywhere.com/static/docs/{filename}"
+        return url
+    return None
+
+
 
 @app.route("/insert_row=<tabla>", methods=["POST"])
 def crud_insert(tabla):
@@ -532,8 +751,17 @@ def crud_insert(tabla):
 
     valores = []
     for nombre, _ in firma.parameters.items():
-        valor = request.form.get(nombre)
-        valores.append(valor)
+        if nombre in request.files:
+            archivo = request.files[nombre]
+            if archivo.filename != "":
+                nuevo_nombre = guardar_archivo(archivo)
+                valores.append(nuevo_nombre)
+            else:
+                # Si no se selecciona una nueva imagen, mantener la actual
+                valores.append(request.form.get(f"{nombre}_actual"))
+        else:
+            valor = request.form.get(nombre)
+            valores.append(valor)
 
     controlador.insert_row(*valores)
 
@@ -544,6 +772,7 @@ def crud_insert(tabla):
 
     # except Exception as e:
     #     return f"No se aceptan carácteres especiales", 400
+
 
 
 @app.route("/update_row=<tabla>", methods=["POST"])
@@ -563,8 +792,17 @@ def crud_update(tabla):
 
     valores = []
     for nombre, _ in firma.parameters.items():
-        valor = request.form.get(nombre)
-        valores.append(valor)
+        if nombre in request.files:
+            archivo = request.files[nombre]
+            if archivo.filename != "":
+                nuevo_nombre = guardar_archivo(archivo)
+                valores.append(nuevo_nombre)
+            else:
+                # Si no se selecciona una nueva imagen, mantener la actual
+                valores.append(request.form.get(f"{nombre}_actual"))
+        else:
+            valor = request.form.get(nombre)
+            valores.append(valor)
 
     controlador.update_row(*valores)
 
@@ -605,8 +843,7 @@ def crud_delete(tabla):
 
 
 @app.route("/unactive_row=<tabla>", methods=["POST"])
-# @validar_empleado()
-# @validar_error_crud()
+
 def crud_unactive(tabla):
     config = CONTROLADORES.get(tabla)
     if not config:
@@ -641,7 +878,3 @@ def crud_unactive(tabla):
 #     return render_template("dashboard_general.html")
 
 
-
-
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=8000, debug=True)

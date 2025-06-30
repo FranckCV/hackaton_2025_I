@@ -1,12 +1,13 @@
-URL_NGROK = 'https://3282-2800-200-d000-7d7-196-cd81-4fec-ef75.ngrok-free.app/'
-VERIFY_TOKEN = "midetoken123"
+import configuraciones
+URL_NGROK = configuraciones.URL_SITE
+VERIFY_TOKEN = configuraciones.VERIFY_TOKEN
 
-from flask import Flask, request , jsonify
+from flask import Flask, request 
 import requests
 from datetime import datetime
 import pytz
 
-from function_wsp import send_wsp_document, send_wsp_msg , send_wsp_list_options 
+from function_wsp import send_wsp_document, send_wsp_msg , send_wsp_list_options
 
 app = Flask(__name__)
 

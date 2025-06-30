@@ -46,16 +46,16 @@ def get_table():
             # pa.activo,
             p.titulo as titulo_pre 
         from {table_name} pa
-        inner join pregunta p on p.id = pa.preguntaid
+        left join pregunta p on p.id = pa.preguntaid
         order by p.id asc
     '''
     columnas = {
         'id': ['ID' , 0.5 ] , 
         'titulo' : ['titulo' , 2] , 
-        'descripcion' : ['descripcion' , 3] , 
+        # 'descripcion' : ['descripcion' , 3] , 
         'url' : ['url' , 2] , 
         # 'activo' : ['activo' , 1] , 
-        'titulo_pre' : ['titulo' , 2],
+        'titulo_pre' : ['Pregnta' , 2],
     }
     filas = sql_select_fetchall(sql)
     

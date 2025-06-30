@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, redirect,  jsonify,  make_response,   url_for, json
 import main_controlador
 from werkzeug.utils import secure_filename
-# import ast
 import configuraciones
 import controladores.controlador_usuario as controlador_usuario
 import controladores.controlador_pregunta as controlador_pregunta
@@ -12,17 +11,20 @@ import controladores.controlador_pregunta as controlador_pregunta
 import controladores.controlador_documento as controlador_documento
 import controladores.controlador_dashboard as controlador_dashboard
 import controladores.bd as bd
+import fitz  # PyMuPDF
 
-# import _ARCHIVADO.modelo_semantico as modelo_semantico
 import os
 import requests
-# from datetime import datetime, date
 from functools import wraps
 import inspect
 
+# import ast
+# import _ARCHIVADO.modelo_semantico as modelo_semantico
+# from datetime import datetime, date
 # load_dotenv()
 
 app = Flask(__name__, template_folder='templates')
+
 
 VERIFY_TOKEN           = configuraciones.VERIFY_TOKEN
 ACCESS_TOKEN           = configuraciones.ACCESS_TOKEN
@@ -30,6 +32,14 @@ PHONE_NUMBER_ID        = configuraciones.PHONE_NUMBER_ID
 RECIPIENT_PHONE_NUMBER = configuraciones.RECIPIENT_PHONE_NUMBER
 WSP_URL                = configuraciones.WSP_URL
 URL_SITE               = configuraciones.URL_SITE
+PYTHON_URL             = configuraciones.PYTHON_URL
+
+resp = requests.post(
+    f"{PYTHON_URL}set_ngrok_url",
+    json={"url": URL_SITE},
+    timeout=10
+)
+
 
 STATE_0                = configuraciones.STATE_0
 STATE_1                = configuraciones.STATE_1
@@ -73,106 +83,6 @@ def truncar_texto(texto, max_len=24):
 
 def extract_message_entry(data):
     return force_json(data)["entry"][0]["changes"][0]["value"]["messages"][0]
-
-
-
-# @app.route("/webhook", methods=["GET", "POST"])
-# def webhook():
-#     if request.method == "GET":
-#         mode = request.args.get("hub.mode")
-#         token = request.args.get("hub.verify_token")
-#         challenge = request.args.get("hub.challenge")
-#         if mode == "subscribe" and token == VERIFY_TOKEN:
-#             return challenge, 200
-#         else:
-#             return "Token inválido", 403
-
-#     elif request.method == "POST":
-
-#         data = request.get_json()
-
-#         try:
-#             message = data["entry"][0]["changes"][0]["value"]["messages"][0]
-#             sender = message["from"]
-#             tipo = message["type"]
-#             fecha = main_controlador.local_hour()
-
-#             main_controlador.insert_data_webhook(data, fecha)
-
-#             payload = None
-#             response = None
-#             rpta = None
-
-#             # Obtener payload si viene de botón o lista interactiva
-#             if tipo == "button":
-#                 payload = message["button"]["payload"]
-#             elif tipo == "interactive" and message.get("interactive", {}).get("type") == "list_reply":
-#                 payload = message["interactive"]["list_reply"]["id"]
-
-#             # Procesar interacción con botones o listas
-#             if payload:
-#                 if payload == "OTROS_CAT":
-#                     main_controlador.set_estado(sender, "modo_abierto")
-#                     response = send_wsp_msg(sender, "Puedes escribir tu pregunta libremente.")
-
-#                 elif payload.startswith("CAT_"):
-#                     categoria_id = int(payload.split("_")[1])
-#                     main_controlador.set_estado(sender, "preguntas", categoria_id)
-#                     preguntas = main_controlador.get_preguntas_por_categoria(categoria_id)
-#                     # rows = [{"id": f"PRE_{p['id']}", "title": truncar_texto(p["titulo"]) } for p in preguntas]
-#                     rows = [{"id": f"PRE_{p['id']}", "title": truncar_texto(p["titulo"]) , "description": p["titulo"] } for p in preguntas]
-#                     rows.append({"id": "OTROS_PREG", "title": "Otros"})
-#                     # rpta = [ preguntas , rows ]
-#                     response = send_wsp_list_options(sender, "Selecciona una pregunta:", rows, "Preguntas disponibles")
-
-#                 elif payload.startswith("PRE_"):
-#                     pregunta_id = int(payload.split("_")[1])
-#                     respuesta = main_controlador.responder_gpt_desde_pregunta(pregunta_id)
-#                     response = send_wsp_msg(sender, respuesta)
-#                     main_controlador.set_estado(sender, "modo_abierto")
-
-#                 elif payload == "OTROS_PREG":
-#                     main_controlador.set_estado(sender, "modo_abierto")
-#                     response = send_wsp_msg(sender, "Escribe tu pregunta libremente.")
-
-#             # Procesar mensajes de texto normales
-#             elif tipo == "text":
-#                 texto = message["text"]["body"].strip()
-
-#                 if texto.lower() == "salir":
-#                     main_controlador.limpiar_estado(sender)
-#                     response = send_wsp_msg(sender, "¡Gracias por usar el chatbot! Hasta pronto ✌")
-#                 else:
-#                     estado = main_controlador.get_estado(sender)
-
-#                     if estado == "inicio" or estado is None:
-#                         main_controlador.set_estado(sender, "categorias")
-#                         categorias = main_controlador.get_categorias()
-#                         rows = [{"id": f"CAT_{c['id']}", "title": c["nombre"]} for c in categorias]
-#                         rows.append({"id": "OTROS_CAT", "title": "Otros"})
-#                         response = send_wsp_list_options(sender, "¡Hola! ¿Sobre qué tema deseas información?", rows, "Categorías disponibles")
-
-#                     elif estado == "modo_abierto":
-#                         respuesta, docs = main_controlador.responder_gpt_con_doc_soporte(texto, fecha )
-#                         response = send_wsp_msg(sender, respuesta)
-#                         if docs :
-#                             response = send_wsp_msg(sender, "📎 Aquí tienes documentos que podrían ayudarte:")
-#                             for doc in docs:
-#                                 response = send_wsp_document(sender, doc["url"], doc["titulo"])
-
-#                         main_controlador.set_estado(sender, "modo_abierto")
-
-#                     elif estado == "preguntas":
-#                         categoria_id = main_controlador.get_categoria_actual(sender)
-#                         respuesta = main_controlador.buscar_pregunta_en_categoria(texto, categoria_id)
-#                         response = send_wsp_msg(sender, respuesta)
-#                         main_controlador.set_estado(sender, "modo_abierto")
-
-#             main_controlador.limpiar_estados_expirados()
-#             return f"OK , {message , rpta , response.text}", 200
-
-#         except Exception as e:
-#             return f"ERROR EN WEBHOOK: {e}", 200
 
 
 @app.route("/insert_webhook", methods=["POST"])
@@ -247,7 +157,11 @@ def procesar_mensaje():
                 elif estado == "modo_abierto":
                     respuesta, docs = main_controlador.responder_gpt_con_doc_soporte(texto, fecha)
                     if docs:
-                        documentos = docs
+                        for d in docs:
+                            d['url'] = f'{URL_SITE}static/docs/{d.get('url')}' 
+                            # print(d)
+                            documentos.append(d)
+                        # print(documentos)
                     main_controlador.set_estado(sender, "modo_abierto")
                 elif estado == "preguntas":
                     categoria_id = main_controlador.get_categoria_actual(sender)
@@ -255,7 +169,7 @@ def procesar_mensaje():
                     main_controlador.set_estado(sender, "modo_abierto")
 
         main_controlador.limpiar_estados_expirados()
-
+        # print(respuesta)
         return jsonify({
             "respuesta": respuesta,
             "documentos": documentos,
@@ -280,7 +194,6 @@ def get_webhook():
     return f'{texto}'
 
 
-
 @app.route("/")
 def index():
     historial = controlador_historial.get_data()
@@ -288,13 +201,16 @@ def index():
     cantidad_historial = controlador_historial.get_question_count()
     return render_template("index.html",historial=historial, cantidad_usuarios = cantidad_usuarios, cantidad_historial = cantidad_historial)  # Si tienes un index.html con interfaz
 
+
 @app.route("/categorias")
 def categorias():
     return jsonify(controlador_categoria.obtener_categorias())
 
+
 @app.route("/preguntas_por_categoria/<int:cat_id>")
 def preguntas_por_categoria(cat_id):
     return jsonify(controlador_pregunta.obtener_preguntas_por_categoria(cat_id))
+
 
 @app.route("/preguntar_json", methods=["POST"])
 def preguntar_json():
@@ -305,9 +221,11 @@ def preguntar_json():
         respuesta = "No encontré una respuesta precisa. ¿Puedes reformular tu pregunta?"
     return jsonify({"respuesta": respuesta})
 
+
 @app.route("/index_2")
 def index_2():
     return render_template("index_2.html")  # Si tienes un index.html con interfaz
+
 
 @app.route("/respuesta_directa", methods=["POST"])
 def respuesta_directa():
@@ -396,7 +314,6 @@ ERRORES = {
     "LOGIN_INVALIDO" : 'Credenciales inválidas. Intente de nuevo' ,
     "foreign key constraint fails" : 'No es posible eliminar dicha fila' ,
 }
-
 
 
 CONTROLADORES = {
@@ -511,6 +428,7 @@ CONTROLADORES = {
     },
 }
 
+
 REPORTES = {
 
 }
@@ -553,7 +471,6 @@ def rdrct_error(resp_redirect , e):
     return resp
 
 
-###############################OBTENER DATOS########################
 def listar_cruds():
     pages = []
 
@@ -614,15 +531,9 @@ def inject_globals():
         ICON_PAGE_NOICON       = f'{ICON_PAGE_NOICON} d_i',
     )
 
-@app.route("/prueba")
-def prueba():
-    return render_template("prueba.html")
 
-
-#################RUTAS#####################
 
 @app.route("/crud=<tabla>")
-# @validar_empleado()
 def crud_generico(tabla):
     config = CONTROLADORES.get(tabla)
     if config:
@@ -673,6 +584,7 @@ def crud_generico(tabla):
                 crud_unactive  = crud_unactive,
             )
 
+
 @app.route("/reporte=<report_name>")
 def reporte(report_name):
     config = REPORTES.get(report_name)
@@ -705,8 +617,6 @@ def reporte(report_name):
                 esReporte      = True ,
             )
 
-##################_ PAGINAS EMPLEADO METHOD POST _##################
-
 
 UPLOAD_FOLDER = os.path.abspath(os.path.join(os.path.dirname(__file__), "static/docs"))
 ALLOWED_EXTENSIONS = {'pdf', 'txt'}
@@ -720,14 +630,35 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+
+def extraer_texto_pdf(filepath, max_chars=1000):
+    """
+    Extrae texto limpio de un PDF para llenar automáticamente el campo descripcion.
+    Limita a max_chars para evitar desbordes de campo.
+    """
+    try:
+        texto = ""
+        with fitz.open(filepath) as doc:
+            for page in doc:
+                texto += page.get_text()
+                if len(texto) >= max_chars:
+                    break
+        texto = texto.strip().replace('\n', ' ')
+        if len(texto) > max_chars:
+            texto = texto[:max_chars] + "..."
+        return texto
+    except Exception as e:
+        print(f"Error extrayendo texto del PDF: {e}")
+        return ""
+
 def guardar_archivo(archivo):
     if archivo and allowed_file(archivo.filename):
         filename = secure_filename(archivo.filename)
         filepath = os.path.join(UPLOAD_FOLDER, filename)
         archivo.save(filepath)
-        url = f"{URL_SITE}{filename}"
-        return url
-    return None
+        url = f"{filename}"
+        return url, filepath
+    return None, None
 
 
 
@@ -747,18 +678,25 @@ def crud_insert(tabla):
     firma = inspect.signature(controlador.insert_row)
 
     valores = []
+    filepath_archivo = None
     for nombre, _ in firma.parameters.items():
         if nombre in request.files:
             archivo = request.files[nombre]
             if archivo.filename != "":
-                nuevo_nombre = guardar_archivo(archivo)
+                nuevo_nombre, filepath_archivo = guardar_archivo(archivo)
                 valores.append(nuevo_nombre)
             else:
-                # Si no se selecciona una nueva imagen, mantener la actual
                 valores.append(request.form.get(f"{nombre}_actual"))
         else:
             valor = request.form.get(nombre)
             valores.append(valor)
+
+    # Si la tabla es 'documento' y la descripcion está vacía, extraer del PDF
+    if tabla == "documento":
+        idx_desc = list(firma.parameters.keys()).index("descripcion")
+        if not valores[idx_desc] and filepath_archivo and filepath_archivo.endswith(".pdf"):
+            texto_pdf = extraer_texto_pdf(filepath_archivo)
+            valores[idx_desc] = texto_pdf
 
     controlador.insert_row(*valores)
 
@@ -766,9 +704,6 @@ def crud_insert(tabla):
         return redirect(url_for(no_crud))
     else:
         return redirect(url_for("crud_generico", tabla=tabla))
-
-    # except Exception as e:
-    #     return f"No se aceptan carácteres especiales", 400
 
 
 

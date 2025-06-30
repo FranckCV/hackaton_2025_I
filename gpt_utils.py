@@ -2,7 +2,7 @@ import openai
 import controladores.bd as bd
 
 
-openai.api_key = "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"
+openai.api_key = "" 
 
 def ejecutar_prompt( content , prompt ):
     respuesta = openai.ChatCompletion.create(

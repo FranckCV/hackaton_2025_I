@@ -10,6 +10,10 @@ INSERT INTO categoria (`id`, `nombre`, `descripcion`, `activo`) VALUES
 (10, 'Autoridades', 'Autoridades de la Escuela de Ingenieria en Sistema y Computacion de USAT', 1),
 (11, 'Facultades', NULL, 1),
 (12, 'Año Académico', 'Información sobre semestres, cursos de verano y duración del año académico.', 1);
+INSERT INTO categoria (id, nombre, descripcion, activo) VALUES 
+(13, 'Convenios Internacionales', 'Información sobre convenios con universidades extranjeras', 1),
+(14, 'Becas', 'Becas y ayudas económicas', 1);
+
 INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES (1, 'Créditos complementarios', 'Debe acreditar mínimamente dos (2) créditos de formación complementaria, los cuales puede desarrollarlo mediante talleres: Deportivos, Artísticos, Tutoría par, Responsabilidad social, etc.', 1);
 INSERT INTO pregunta (id, titulo, respuesta, CATEGORIAid) VALUES 
 (
@@ -128,9 +132,6 @@ INSERT INTO historial (mensaje, fecha) VALUES
 ('Tengo problemas para ingresar al aula virtual.', '2025-06-05 17:50:00'),
 ('¿Qué hacer si no me aparece una asignatura en el sistema?', '2025-06-06 08:20:00');
 
-
-INSERT INTO `categoria` (`nombre`, `descripcion`, `activo`)
-VALUES ('Convenios internacionales', 'Convenios con universidades extranjeras', 1);
 
 INSERT INTO pregunta (titulo, respuesta, CATEGORIAid) VALUES
 (
@@ -293,4 +294,16 @@ INSERT INTO pregunta (titulo, respuesta, CATEGORIAid) VALUES
 
 INSERT INTO pregunta (titulo, respuesta, CATEGORIAid) VALUES 
 ('Director de Escuela', 'Ing. Huilder Mera\r\nCorreo hmera.@usat.edu.pe', 10);
+
+INSERT INTO pregunta (titulo, respuesta, CATEGORIAid) VALUES 
+('Becas', 'Se otorgan becas por rendimiento académico en estricto orden de mérito', 14);
+
+
+INSERT INTO `documento` (`id`, `titulo`, `descripcion`, `url`, `activo`, `preguntaid`) VALUES
+(1, 'Manual de sustentación de tesis', 'Manual para hacer una correcta sustentacion de tesis', 'https://franckcv.pythonanywhere.com/static/docs/MANUAL_SUSTENTACION_TESIS_V3.pdf', 1, NULL),
+(2, 'Plan de estudios 2017', 'Plan de estudios para la carrera de ingenieria en sistemas hecho en 2017', 'https://franckcv.pythonanywhere.com/static/docs/sistemas2017-v3.pdf', 1, NULL),
+(3, 'Plan de estudios 2025', 'Plan de estudios para la carrera de ingenieria en sistemas hecho en 2025', 'https://franckcv.pythonanywhere.com/static/docs/sistemas2025.pdf', 1, NULL),
+(4, 'Cartilla pensiones 2025', 'La presente Cartilla establece las normas para el proceso administrativo de matrícula, el pago de la misma, así como el de pensiones y demás aspectos conexos vigentes del Semestre Académico 2025-1.', 'https://franckcv.pythonanywhere.com/static/docs/CartillaPensiones2025IFinal28.01.25.pdf', 1, NULL),
+(5, 'Cartilla Informativa Cursos de verano 2025', '', 'https://franckcv.pythonanywhere.com/static/docs/CARTILLAiNFORMATIVACursosVerano2025Final19.11.24.pdf', 1, NULL),
+(6, 'Directiva de ayuda economica pregrado 2025', 'Directiva que brinda información respecto a las becas por ayuda económica ', 'https://franckcv.pythonanywhere.com/static/docs/Directiva_de_Ayuda_Economica_Pregrado_V5.pdf', 1, 10);
 

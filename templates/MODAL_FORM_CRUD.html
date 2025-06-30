@@ -1,10 +1,10 @@
 <div class="space_modal modal_crud_{{modo_modal}} modal_crud_base" id="modal_crud_{{modo_modal}}_{{tabla}}_{{fila[primary_key] if fila else ''}}">
   <form class="modal_crud_content"
-        {% if modo_modal in ['insert', 'update', 'delete', 'unactive']  %}
-        action="{{ url_for('crud_' + modo_modal, tabla=tabla) }}"
-        method="POST"
-        
-        {% endif %}>
+      {% if modo_modal in ['insert', 'update', 'delete', 'unactive'] %}
+      action="{{ url_for('crud_' + modo_modal, tabla=tabla) }}"
+      method="POST" {% endif %}
+      {% if tabla == "documento" %} enctype="multipart/form-data" {% endif %}>
+
         
     <input type="hidden" name="{{ primary_key }}" value="{{ fila[primary_key] if fila else '' }}">
 
@@ -125,7 +125,7 @@
             type="file" 
             id="{{campo[0]}}" 
             name="{{campo[0]}}" 
-            accept="image/*" 
+            accept="image/*,application/pdf" 
             {% if campo[4] %}required{% endif %}
             {% if campo[5] == False %}disabled{% endif %}
           >
@@ -138,7 +138,7 @@
             type="file" 
             id="{{campo[0]}}" 
             name="{{campo[0]}}" 
-            accept="image/*"             
+            accept="image/*,application/pdf"             
             {% if modo_modal == 'consult' or campo[5] == False %}disabled{% endif %}
           >
           <div class="form_img_container" id="">

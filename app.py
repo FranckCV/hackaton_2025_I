@@ -10,6 +10,7 @@ import controladores.controlador_palabra_clave as controlador_palabra_clave
 import controladores.controlador_pregunta as controlador_pregunta
 import controladores.controlador_documento as controlador_documento
 import controladores.controlador_dashboard as controlador_dashboard
+from controladores import clase_lectora_pdf as clase_lectora_pdf
 import controladores.bd as bd
 import fitz  # PyMuPDF
 
@@ -660,10 +661,30 @@ def guardar_archivo(archivo):
         return url, filepath
     return None, None
 
+def guardar_archivo_2(archivo):
+    print("Archivos recibidos:", request.files)  # Verifica que los archivos estén llegando correctamente
+    
+    if archivo:
+        print(f"Nombre del archivo recibido: {archivo.filename}")
+    
+    if archivo and allowed_file(archivo.filename):
+        filename = secure_filename(archivo.filename)
+        filepath = os.path.join(UPLOAD_FOLDER, filename)
+        
+        # Imprime la ruta completa antes de guardar
+        print("Ruta del archivo a guardar:", filepath)
+
+        archivo.save(filepath)
+        return filename, filepath  # Retorna nombre y ruta completa del archivo
+    else:
+        print("El archivo no es válido o no tiene extensión permitida.")
+    
+    return None, None
 
 
 @app.route("/insert_row=<tabla>", methods=["POST"])
 def crud_insert(tabla):
+    # print("Tabla 0000", tabla)
     config = CONTROLADORES.get(tabla)
     if not config:
         return "Tabla no soportada", 404
@@ -679,11 +700,17 @@ def crud_insert(tabla):
 
     valores = []
     filepath_archivo = None
+    lector = clase_lectora_pdf.LectorArchivo()  # Usa tu clase con múltiples formatos
+
     for nombre, _ in firma.parameters.items():
+        # print("Archivos recibidos:", request.files)  # Verifica que los archivos
         if nombre in request.files:
+            print("Nombre del archivo:", request.files[nombre])
             archivo = request.files[nombre]
             if archivo.filename != "":
-                nuevo_nombre, filepath_archivo = guardar_archivo(archivo)
+                if not lector.allowed_file(archivo.filename):
+                    return "Tipo de archivo no permitido", 400
+                nuevo_nombre, filepath_archivo = guardar_archivo_2(archivo)
                 valores.append(nuevo_nombre)
             else:
                 valores.append(request.form.get(f"{nombre}_actual"))
@@ -691,13 +718,17 @@ def crud_insert(tabla):
             valor = request.form.get(nombre)
             valores.append(valor)
 
-    # Si la tabla es 'documento' y la descripcion está vacía, extraer del PDF
+    # print("Tabla ", tabla)
     if tabla == "documento":
         idx_desc = list(firma.parameters.keys()).index("descripcion")
-        if not valores[idx_desc] and filepath_archivo and filepath_archivo.endswith(".pdf"):
-            texto_pdf = extraer_texto_pdf(filepath_archivo)
-            valores[idx_desc] = texto_pdf
+        # print("Ruta del archivo00000:", filepath_archivo)
+        if (valores[idx_desc] is None or valores[idx_desc].strip() == "") and filepath_archivo:
+            print("Ruta del archivo:", filepath_archivo)
 
+            texto_extraido = lector.leer(filepath_archivo)
+            valores[idx_desc] = texto_extraido
+
+    # print("Valores a insertar:", valores)
     controlador.insert_row(*valores)
 
     if no_crud:
@@ -705,7 +736,7 @@ def crud_insert(tabla):
     else:
         return redirect(url_for("crud_generico", tabla=tabla))
 
-
+    
 
 @app.route("/update_row=<tabla>", methods=["POST"])
 def crud_update(tabla):
@@ -743,6 +774,18 @@ def crud_update(tabla):
     else:
         return redirect(url_for("crud_generico", tabla=tabla))
 
+# @app.route("/subir_y_leer", methods=["POST"])
+# def subir_y_leer():
+#     archivo = request.files.get("archivo")
+#     if archivo:
+#         lector = clase_lectora_pdf.LectorArchivo()
+#         nombre_archivo, ruta = lector.guardar_archivo(archivo)
+#         if ruta:
+#             contenido = lector.leer(ruta)
+#             print(f"Contenido del archivo {nombre_archivo}:\n{contenido}")
+#             return jsonify({"archivo": nombre_archivo, "contenido": contenido})
+#         return jsonify({"error": "Archivo no permitido"}), 400
+#     return jsonify({"error": "No se recibió ningún archivo"}), 400
 
 
 @app.route("/delete_row=<tabla>", methods=["POST"])

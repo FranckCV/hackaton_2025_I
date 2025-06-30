@@ -1,8 +1,8 @@
 import openai
 import controladores.bd as bd
+import configuraciones
 
-
-openai.api_key = "" 
+openai.api_key = configuraciones.API_GPT
 
 def ejecutar_prompt( content , prompt ):
     respuesta = openai.ChatCompletion.create(

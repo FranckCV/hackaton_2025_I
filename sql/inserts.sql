@@ -71,3 +71,97 @@ INSERT INTO historial (mensaje, fecha) VALUES
 ('¿Qué cursos electivos están disponibles para mi carrera?', '2025-06-05 13:05:00'),
 ('Tengo problemas para ingresar al aula virtual.', '2025-06-05 17:50:00'),
 ('¿Qué hacer si no me aparece una asignatura en el sistema?', '2025-06-06 08:20:00');
+
+------------------------NUEVAS CATEGORÍAS Y PREGUNTAS------------------------
+
+INSERT INTO pregunta (titulo, respuesta, CATEGORIAid) VALUES
+(
+  '¿Cuáles son las facultades que tiene la universidad?',
+  'Nuestra universidad cuenta con las siguientes facultades:
+  \n- Facultad de Ingeniería
+  \n- Facultad de Humanidades
+  \n- Facultad de Derecho
+  \n- Facultad de Medicina
+  \n- Facultad de Ciencias Empresariales',
+  11
+),
+(
+  '¿Qué carreras tiene la Facultad de Ingeniería?',
+  'La Facultad de Ingeniería ofrece las siguientes carreras:
+  \n- Arquitectura
+  \n- Ingeniería Civil
+  \n- Ingeniería de Sistemas y Computación
+  \n- Ingeniería Industrial
+  \n- Ingeniería Mecánica Eléctrica',
+  11
+),
+(
+  '¿Qué carreras hay en la Facultad de Humanidades?',
+  'La Facultad de Humanidades cuenta con las siguientes carreras:
+  \n- Educación Secundaria
+  \n- Filosofía y Teología
+  \n- Educación Primaria
+  \n- Educación Inicial
+  \n- Comunicación',
+  11
+),
+(
+  '¿Qué carreras hay en la Facultad de Derecho?',
+  'La Facultad de Derecho ofrece la carrera profesional de Derecho.',
+  11
+),
+(
+  '¿Qué carreras ofrece la Facultad de Medicina?',
+  'La Facultad de Medicina cuenta con las siguientes carreras:
+  \n- Medicina
+  \n- Psicología
+  \n- Odontología
+  \n- Enfermería',
+  11
+),
+(
+  '¿Qué carreras tiene la Facultad de Ciencias Empresariales?',
+  'La Facultad de Ciencias Empresariales ofrece las siguientes carreras:
+  \n- Administración de Empresas
+  \n- Administración Hotelera y de Servicios Turísticos
+  \n- Economía
+  \n- Contabilidad',
+  11
+);
+
+INSERT INTO categoria (nombre, descripcion, estado) VALUES
+('Año Académico', 'Información sobre semestres, cursos de verano y duración del año académico.', 1);
+
+INSERT INTO pregunta (titulo, respuesta, CATEGORIAid) VALUES
+(
+  '¿Cuántos semestres tiene el año académico?',
+  'El año académico se divide en dos semestres: el Semestre Académico I (de marzo a julio) y el Semestre Académico II (de agosto a diciembre), cada uno con una duración mínima de 16 semanas.',
+  12
+),
+(
+  '¿Cuándo inicia y termina el primer semestre?',
+  'El Semestre Académico I se desarrolla preferentemente entre los meses de marzo y julio, con una duración mínima de 16 semanas.',
+  12
+),
+(
+  '¿Cuándo se lleva a cabo el segundo semestre?',
+  'El Semestre Académico II se lleva a cabo preferentemente entre los meses de agosto y diciembre, también con una duración mínima de 16 semanas.',
+  12
+),
+(
+  '¿Existen cursos de verano?',
+  'Sí. La universidad organiza un periodo académico de cursos de verano entre enero y febrero, con una duración de 7 semanas incluyendo evaluaciones. Las notas obtenidas se consideran para el cálculo del promedio ponderado acumulado.',
+  12
+),
+(
+  '¿Quién autoriza los cursos de verano?',
+  'Los cursos de verano son propuestos por el Director de Escuela, autorizados por el Decano de Facultad, comunicados al Vicerrectorado Académico y ejecutados por la Dirección Académica.',
+  12
+),
+(
+  '¿Hay un periodo de nivelación para ingresantes?',
+  'Sí. La universidad puede programar un periodo de nivelación o propedéutico para los ingresantes que requieran nivelarse en las competencias del perfil de ingreso.',
+  12
+);
+
+

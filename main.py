@@ -33,10 +33,8 @@ def webhook():
             message = data["entry"][0]["changes"][0]["value"]["messages"][0]
             sender = message["from"]
             
+            
             ############código agregado
-            # EXTRAER NÚMERO
-            sender = message["from"]
-
             # REGISTRAR USUARIO SI NO EXISTE
             requests.post(f"{URL_NGROK}insert_usuario_chat", json={
                 "numero": sender
@@ -78,7 +76,7 @@ def webhook():
                 for doc in documentos:
                     response2 = send_wsp_document(sender, doc["url"], doc["titulo"])
 
-                return f"OK , {message , respuesta , response1.text}", 200
+                return f"OK , msg: {message} , rpta: {respuesta} , response: {response1.text}", 200
 
             else:
                 send_wsp_msg(sender, "Lo siento, ocurrió un error al procesar tu solicitud.")
@@ -86,6 +84,7 @@ def webhook():
 
         except Exception as e:
             return f"ERROR EN WEBHOOK: {e}", 200
+
 
 @app.route("/insert_usuario_chat", methods=["POST"])
 def insert_usuario_chat():

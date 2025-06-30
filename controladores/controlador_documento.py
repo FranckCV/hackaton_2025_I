@@ -51,11 +51,11 @@ def get_table():
     '''
     columnas = {
         'id': ['ID' , 0.5 ] , 
-        'titulo' : ['titulo' , 2] , 
+        'titulo' : ['Título' , 2] , 
         # 'descripcion' : ['descripcion' , 3] , 
-        'url' : ['url' , 2] , 
+        'url' : ['URL' , 2] , 
         # 'activo' : ['activo' , 1] , 
-        'titulo_pre' : ['Pregnta' , 2],
+        'titulo_pre' : ['Pregunta' , 2],
     }
     filas = sql_select_fetchall(sql)
     

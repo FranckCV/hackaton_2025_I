@@ -294,3 +294,13 @@ INSERT INTO pregunta (titulo, respuesta, CATEGORIAid) VALUES
 INSERT INTO pregunta (titulo, respuesta, CATEGORIAid) VALUES 
 ('Director de Escuela', 'Ing. Huilder Mera\r\nCorreo hmera.@usat.edu.pe', 10);
 
+
+INSERT INTO `documento` (`id`, `titulo`, `descripcion`, `url`, `activo`, `preguntaid`) VALUES
+(1, 'Manual de sustentación de tesis', 'Manual para hacer una correcta sustentacion de tesis', 'MANUAL_SUSTENTACION_TESIS_V3.pdf', 1, NULL),
+(2, 'Plan de estudios 2017', 'Plan de estudios para la carrera de ingenieria en sistemas hecho en 2017', 'sistemas2017-v3.pdf', 1, NULL),
+(3, 'Plan de estudios 2025', 'Plan de estudios para la carrera de ingenieria en sistemas hecho en 2025', 'sistemas2025.pdf', 1, NULL),
+(4, 'Cartilla pensiones 2025', 'La presente Cartilla establece las normas para el proceso administrativo de matrícula, el pago de la misma, así como el de pensiones y demás aspectos conexos vigentes del Semestre Académico 2025-1.', 'CartillaPensiones2025IFinal28.01.25.pdf', 1, NULL),
+(5, 'Cartilla Informativa Cursos de verano 2025', '', 'CARTILLAiNFORMATIVACursosVerano2025Final19.11.24.pdf', 1, NULL),
+(6, 'Directiva de ayuda economica pregrado 2025', 'Directiva que brinda información respecto a las becas por ayuda económica ', 'Directiva_de_Ayuda_Economica_Pregrado_V5.pdf', 1, 10),
+(11, 'cronograma de actualizacion de tesis inicio 2025-I', '', 'cronograma de actualizacion de tesis- inicio 2025-II.pdf', 1, NULL),
+(12, 'cronograma de actualizacion de tesis- inicio 2025-II', '', 'cronograma de actualizacion de tesis- inicio 2025-II.pdf', 1, 6);

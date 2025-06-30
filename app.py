@@ -77,7 +77,7 @@ def force_json(data):
     return json.loads(data)
 
 
-def truncar_texto(texto, max_len=24):
+def truncar_texto(texto, max_len=21):
     return texto if len(texto) <= max_len else texto[:max_len - 3].strip() + "..."
 
 
@@ -124,7 +124,7 @@ def procesar_mensaje():
                 categoria_id = int(payload.split("_")[1])
                 main_controlador.set_estado(sender, "preguntas", categoria_id)
                 preguntas = main_controlador.get_preguntas_por_categoria(categoria_id)
-                rows = [{"id": f"PRE_{p['id']}", "title": p["titulo"], "description": p["titulo"]} for p in preguntas]
+                rows = [{"id": f"PRE_{p['id']}", "title": truncar_texto(p["titulo"]), "description": p["titulo"]} for p in preguntas]
                 rows.append({"id": "OTROS_PREG", "title": "Otros"})
                 respuesta = "Selecciona una pregunta:"
                 tipo_envio = "lista"
@@ -148,7 +148,7 @@ def procesar_mensaje():
                 if estado == "inicio" or estado is None:
                     main_controlador.set_estado(sender, "categorias")
                     categorias = main_controlador.get_categorias()
-                    rows = [{"id": f"CAT_{c['id']}", "title": c["nombre"]} for c in categorias]
+                    rows = [{"id": f"CAT_{c['id']}", "title": truncar_texto(c["nombre"]), "description": c["nombre"]} for c in categorias]
                     rows.append({"id": "OTROS_CAT", "title": "Otros"})
                     respuesta = "¡Hola! ¿Sobre qué tema deseas información?"
                     tipo_envio = "lista"
@@ -170,6 +170,10 @@ def procesar_mensaje():
 
         main_controlador.limpiar_estados_expirados()
         # print(respuesta)
+        # print(documentos)
+        # print(tipo_envio)
+        # print(lista_opciones)
+        # print(section_title)
         return jsonify({
             "respuesta": respuesta,
             "documentos": documentos,
@@ -646,6 +650,7 @@ def extraer_texto_pdf(filepath, max_chars=1000):
         texto = texto.strip().replace('\n', ' ')
         if len(texto) > max_chars:
             texto = texto[:max_chars] + "..."
+            print(texto)
         return texto
     except Exception as e:
         print(f"Error extrayendo texto del PDF: {e}")

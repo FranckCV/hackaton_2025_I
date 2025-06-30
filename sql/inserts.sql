@@ -74,6 +74,13 @@ INSERT INTO historial (mensaje, fecha) VALUES
 
 ------------------------NUEVAS CATEGORÍAS Y PREGUNTAS------------------------
 
+
+INSERT INTO categoria (nombre, descripcion, estado) VALUES
+('Año Académico', 'Información sobre semestres, cursos de verano y duración del año académico.', 1);
+
+INSERT INTO `categoria` (`nombre`, `descripcion`, `activo`)
+VALUES ('Convenios internacionales', 'Convenios con universidades extranjeras', 1);
+
 INSERT INTO pregunta (titulo, respuesta, CATEGORIAid) VALUES
 (
   '¿Cuáles son las facultades que tiene la universidad?',
@@ -129,8 +136,6 @@ INSERT INTO pregunta (titulo, respuesta, CATEGORIAid) VALUES
   11
 );
 
-INSERT INTO categoria (nombre, descripcion, estado) VALUES
-('Año Académico', 'Información sobre semestres, cursos de verano y duración del año académico.', 1);
 
 INSERT INTO pregunta (titulo, respuesta, CATEGORIAid) VALUES
 (
@@ -172,3 +177,52 @@ VALUES (
   '* lenguaje de señas\n* tenis de mesa\n* futsal para varones y damas\n* dibujo y pintura\n* ajedrez\n* danzas folklóricas\n* voley\n* básquet\n* etiqueta social\n* Taekwondo\n* guitarra\n* percusión',
   5
 );
+
+INSERT INTO `pregunta` (`titulo`, `respuesta`, `CATEGORIAid`) VALUES
+('Convenios con universidades de España',
+'* Universidad de Cádiz\n* Universidad de Navarra\n* Universidad Católica de Valencia San Vicente Mártir\n* Universidad de Zaragoza\n* Universidad Rey Juan Carlos\n* Universidad del País Vasco\n* Universidad Católica de Ávila (UCAV)\n* Universidad de Granada\n* Universidad Cardenal Herrera (CEU)\n* Universidad de Jaén\n* Universidad de Málaga\n* Universidad de Santiago de Compostela (USC)\n* Universitat Internacional de Catalunya (UIC)',
+7),
+
+('Convenios con universidades de Francia',
+'* Université de Bordeaux\n* Université Catholique de l’Ouest (UCO)',
+7),
+
+('Convenios con universidades de Italia',
+'* Sapienza Università di Roma\n* Università degli Studi di Bari Aldo Moro\n* Università degli Studi di Trieste',
+7),
+
+('Convenios con universidades de USA',
+'* Washington State University',
+7),
+
+('Convenios con universidades de Canadá',
+'* University of Regina',
+7),
+
+('Convenios con universidades de India',
+'* Lovely Professional University',
+7),
+
+('Convenios con universidades de México',
+'* Red de Universidades Anáhuac\n* Universidad Autónoma de Nuevo León\n* Universidad Vasco de Quiroga (UVAQ)\n* Universidad Tecnológica de San Juan del Río\n* Universidad Nacional Autónoma de México (UNAM)\n* Universidad de Monterrey',
+7),
+
+('Convenios con universidades de Argentina',
+'* Pontificia Universidad Católica Argentina (UCA)\n* Universidad Católica de Cuyo\n* Universidad Católica de Salta (UCASAL)\n* Universidad Nacional de Tucumán',
+7),
+
+('Convenios con universidades de Brasil',
+'* PUC Goiás\n* Universidade Federal do Rio de Janeiro (UFRJ)\n* La Salle\n* PUC Campinas\n* Universidad de São Paulo (USP)',
+7),
+
+('Convenios con universidades de Chile',
+'* Universidad de los Andes\n* Universidad Católica de Temuco\n* Pontificia Universidad Católica de Valparaíso',
+7),
+
+('Convenios con universidades de Ecuador',
+'* Universidad de Cuenca',
+7),
+
+('Convenios con universidades de Colombia',
+'* Universidad Católica de Colombia\n* Pontificia Universidad Javeriana\n* Universidad CES\n* Universidad Mariana\n* Universidad Autónoma de Occidente\n* Universidad de La Sabana\n* Fundación Universitaria Juan D Castellanos\n* Universidad Nacional de Colombia',
+7);

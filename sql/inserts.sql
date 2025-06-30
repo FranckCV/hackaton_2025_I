@@ -165,3 +165,10 @@ INSERT INTO pregunta (titulo, respuesta, CATEGORIAid) VALUES
 );
 
 
+--------------- más inserts -----------------
+INSERT INTO `pregunta` (`titulo`, `respuesta`, `CATEGORIAid`)
+VALUES (
+  'cursos complementarios',
+  '* lenguaje de señas\n* tenis de mesa\n* futsal para varones y damas\n* dibujo y pintura\n* ajedrez\n* danzas folklóricas\n* voley\n* básquet\n* etiqueta social\n* Taekwondo\n* guitarra\n* percusión',
+  5
+);
